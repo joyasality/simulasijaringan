@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Network Topology Simulator - Phase 8 (Smart Troubleshooting & AI-Like Assistant)</title>
+    <title>Network Topology Simulator - Smart AI & Diagnostic</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -22,9 +22,9 @@
                     }
                 }
             }
-        }
+        };
     </script>
-    <!-- FontAwesome for professional icons -->
+    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -49,8 +49,6 @@
         @keyframes pulseGlowRed { 0%, 100% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.4), 0 0 15px rgba(239, 68, 68, 0.6); } 50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.7), 0 0 25px rgba(239, 68, 68, 0.9); } }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 70% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
         .animate-pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); } 50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.8); } }
-        .animate-glow { animation: pulseGlow 2s infinite; }
     </style>
 </head>
 <body class="bg-[#0F172A] text-slate-100 font-sans h-screen w-screen overflow-hidden flex flex-col select-none transition-colors duration-300">
@@ -63,7 +61,7 @@
             <div>
                 <h1 class="font-bold text-base tracking-wide flex items-center gap-2">
                     NETWORK TOPOLOGY SIMULATOR
-                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full font-medium">v8.0 Smart AI</span>
+                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 px-2 py-0.5 rounded-full font-medium">v8.2 Diagnostic Engine</span>
                 </h1>
                 <p class="text-xs text-slate-400">Interactive Learning & Smart Troubleshooting Platform</p>
             </div>
@@ -87,12 +85,12 @@
             </button>
         </nav>
 
-        <div class="flex items-center space-x-2.5">
+        <div class="flex items-center space-x-2">
             <button onclick="toggleLearningDashboard(true)" title="Gamified Learning Hub" class="p-2 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 text-amber-300 transition text-xs flex items-center gap-1.5 border border-amber-500/40">
                 <i class="fa-solid fa-trophy"></i>
                 <span class="hidden sm:inline" id="header-xp-badge">Level 1 (0 XP)</span>
             </button>
-            <button onclick="toggleAssistantDrawer(true)" title="Smart Network Assistant" class="p-2 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 transition text-xs flex items-center gap-1.5 border border-purple-500/40 animate-pulse">
+            <button onclick="toggleAssistantDrawer(true)" title="Smart Network Assistant" class="p-2 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 transition text-xs flex items-center gap-1.5 border border-purple-500/40">
                 <i class="fa-solid fa-robot"></i>
                 <span class="hidden sm:inline">AI Assistant</span>
             </button>
@@ -180,7 +178,6 @@
             </div>
         </aside>
 
-        <!-- Main Workspace Area -->
         <main class="flex-1 flex flex-col bg-[#0F172A] workspace-grid relative overflow-hidden">
             
             <!-- Active Challenge Banner -->
@@ -262,7 +259,7 @@
                         <i class="fa-solid fa-globe"></i>
                     </div>
                     <h3 class="font-bold text-slate-200 text-sm mb-1">Start Building Your Network</h3>
-                    <p class="text-xs text-slate-400 max-w-xs">Drag devices from sidebar, use <button onclick="toggleTopologyModal(true)" class="text-cyan-400 underline font-semibold">Topology Gen</button>, or launch <button onclick="toggleAssistantDrawer(true)" class="text-purple-400 underline font-semibold">AI Assistant</button>.</p>
+                    <p class="text-xs text-slate-400 max-w-xs">Drag devices from sidebar, use <button onclick="toggleTopologyModal(true)" class="text-cyan-400 underline font-semibold pointer-events-auto">Topology Gen</button>, or launch <button onclick="toggleAssistantDrawer(true)" class="text-purple-400 underline font-semibold pointer-events-auto">AI Assistant</button>.</p>
                 </div>
 
                 <div id="nodes-container" class="absolute inset-0 pointer-events-none"></div>
@@ -285,7 +282,6 @@
             </footer>
         </main>
 
-        <!-- Right Configuration Panel -->
         <aside id="config-panel" class="w-80 bg-[#111827] border-l border-slate-800 flex flex-col z-20 transition-all duration-300 shrink-0">
             <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
                 <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -387,7 +383,6 @@
             <button onclick="toggleAssistantDrawer(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         </div>
 
-        <!-- Health Report Card -->
         <div class="bg-slate-900/90 p-4 border-b border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
                 <div>
@@ -403,7 +398,6 @@
             </div>
         </div>
 
-        <!-- Chat / Diagnostic Feed -->
         <div id="assistant-chat-feed" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
             <div class="bg-purple-500/10 border border-purple-500/30 p-3 rounded-xl space-y-1 text-slate-200">
                 <div class="font-bold text-purple-300 flex items-center gap-1.5"><i class="fa-solid fa-sparkles"></i> AI Assistant Ready</div>
@@ -411,7 +405,6 @@
             </div>
         </div>
 
-        <!-- Quick Intent Buttons -->
         <div class="p-3 bg-slate-900 border-t border-slate-800 flex flex-wrap gap-1.5">
             <button onclick="assistantPrompt('check-health')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg text-[11px] transition">🔍 Health Check</button>
             <button onclick="assistantPrompt('check-ip')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg text-[11px] transition">🌐 Inspect IPs</button>
@@ -433,7 +426,6 @@
                 <button onclick="toggleLearningDashboard(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <!-- Player Profile Header -->
             <div class="bg-slate-900/90 p-5 border-b border-slate-800 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                 <div class="flex items-center space-x-3">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold shadow-lg">
@@ -469,13 +461,11 @@
                 </div>
             </div>
 
-            <!-- Challenge List Container -->
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Available Learning Challenges</h4>
-                    <span id="completed-count-text" class="text-xs text-cyan-400 font-semibold">Completed: 0 / 12</span>
+                    <span id="completed-count-text" class="text-xs text-cyan-400 font-semibold">Completed: 0 / 5</span>
                 </div>
-
                 <div id="challenges-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
@@ -486,7 +476,6 @@
         </div>
     </div>
 
-    <!-- Topology Modal -->
     <div id="topology-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#111827] border border-purple-500/40 w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-pop">
             <div class="bg-[#161B22] px-5 py-4 border-b border-slate-800 flex items-center justify-between">
@@ -504,29 +493,22 @@
                         <option value="MESH">🔷 Mesh Topology (Interconnected Devices)</option>
                         <option value="TREE">🌳 Tree Topology (Hierarchical Structure)</option>
                         <option value="BUS">🚌 Bus Topology (Main Backbone Line)</option>
-                        <option value="HYBRID">🔀 Hybrid Topology (Star + Bus Combo)</option>
                     </select>
                     <p id="gen-topology-desc" class="text-[11px] text-slate-400 mt-2 italic">All devices connect directly to a central switch.</p>
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-medium text-slate-400 mb-1">Number of Devices (2-20)</label>
-                        <input type="number" id="gen-device-count" min="2" max="20" value="6" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 font-mono">
+                        <label class="block font-medium text-slate-400 mb-1">Number of Devices (2-12)</label>
+                        <input type="number" id="gen-device-count" min="2" max="12" value="6" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 font-mono">
                     </div>
                     <div>
-                        <label class="block font-medium text-slate-400 mb-1">Central Device (Star/Tree)</label>
+                        <label class="block font-medium text-slate-400 mb-1">Central Device (Star)</label>
                         <select id="gen-central-device" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-200">
                             <option value="Switch">Switch</option>
                             <option value="Router">Router</option>
                             <option value="Hub">Hub</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="bg-purple-500/10 border border-purple-500/30 p-3.5 rounded-xl text-[11px] text-purple-300 space-y-1">
-                    <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Educational Info</span>
-                    <p>Generating a topology will build professional node arrangements, assign auto-names, create physical links, and prepare IP subnets automatically.</p>
                 </div>
             </div>
             <div class="bg-[#161B22] px-5 py-3 border-t border-slate-800 flex justify-end space-x-2">
@@ -538,7 +520,6 @@
         </div>
     </div>
 
-    <!-- Terminal Modal -->
     <div id="terminal-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0D1117] border border-cyan-500/40 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-pop">
             <div class="bg-[#161B22] px-4 py-3 border-b border-slate-800 flex items-center justify-between">
@@ -550,11 +531,11 @@
             </div>
             <div id="terminal-screen" class="bg-[#050811] p-4 font-mono text-xs text-slate-200 h-80 overflow-y-auto space-y-1 select-text">
                 <div class="text-cyan-400 font-bold">Network Topology Simulator [Phase 8 Smart AI Engine]</div>
-                <div class="text-slate-500 mb-2">Type <span class="text-amber-400">help</span> for available commands (e.g., <span class="text-cyan-300">ping 192.168.1.10</span>).</div>
+                <div class="text-slate-500 mb-2">Type <span class="text-amber-400">help</span> for commands or ping an IP (e.g., <span class="text-cyan-300">ping 192.168.1.10</span>).</div>
                 <div id="terminal-log-container" class="space-y-1"></div>
             </div>
             <div class="bg-[#161B22] p-3 border-t border-slate-800 flex items-center space-x-2">
-                <span class="font-mono text-xs text-cyan-400 font-bold">C:\Network></span>
+                <span class="font-mono text-xs text-cyan-400 font-bold">C:\Network&gt;</span>
                 <input type="text" id="terminal-input" onkeydown="handleTerminalKeydown(event)" placeholder="Type command here..." class="flex-1 bg-transparent border-none text-xs font-mono text-slate-100 focus:outline-none">
                 <button onclick="executeTerminalInput()" class="bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded text-xs font-medium transition">Send</button>
             </div>
@@ -579,6 +560,16 @@
     </div>
 
     <script>
+        function safeGetJSON(key, fallback) {
+            try {
+                const item = localStorage.getItem(key);
+                if (!item) return fallback;
+                return JSON.parse(item);
+            } catch (e) {
+                return fallback;
+            }
+        }
+
         let currentTheme = localStorage.getItem('ns_theme') || 'dark';
         let activeTool = 'select';
         
@@ -596,8 +587,6 @@
         let activeDraggingNodeId = null;
         let dragOffsetX = 0;
         let dragOffsetY = 0;
-        let commandHistory = [];
-        let historyIndex = -1;
 
         let topologyState = {
             current: 'CUSTOM',
@@ -606,8 +595,7 @@
             confidence: 0
         };
 
-        // Gamification / Challenge State
-        let playerData = JSON.parse(localStorage.getItem('ns_player_data')) || {
+        let playerData = safeGetJSON('ns_player_data', {
             name: "Network Student",
             level: 1,
             xp: 0,
@@ -615,7 +603,7 @@
             completedChallenges: [],
             badges: [],
             streak: 3
-        };
+        });
 
         let activeChallenge = null;
         let challengeTimerInterval = null;
@@ -632,7 +620,7 @@
                 objective: 'Add 2 PCs and connect them together using a cable.',
                 requirements: { devices: [{ type: 'PC', count: 2 }], connections: 1 },
                 reward: { xp: 50, score: 100 },
-                hints: ['Drag 2 PCs from the End Devices library into the workspace.', 'Click the Connect tool in the toolbar.', 'Click PC-1 then PC-2 to create a straight cable connection.']
+                hints: ['Drag 2 PCs from the End Devices library into the workspace.', 'Click the Connect tool in the toolbar.', 'Click PC-1 then PC-2 to create a connection.']
             },
             {
                 id: 'ch-2',
@@ -651,10 +639,10 @@
                 level: 1,
                 difficulty: 'Medium',
                 category: 'Topologies',
-                objective: 'Use the Topology Generator or manual connections to build a Star Topology (1 Switch + 4 PCs).',
+                objective: 'Use the Topology Generator or manual connections to build a Star Topology.',
                 requirements: { topology: 'STAR', minDevices: 5 },
                 reward: { xp: 120, score: 150 },
-                hints: ['You can use the Automatic Topology Generator (Top bar) to instantly build Star topology!', 'Or manually place 1 Switch and 4 PCs, then connect all PCs to the Switch.']
+                hints: ['You can use the Automatic Topology Generator (Top bar) to build Star topology!', 'Or manually place 1 Switch and 4 PCs, then connect all PCs to the Switch.']
             },
             {
                 id: 'ch-4',
@@ -690,18 +678,21 @@
             runAiNetworkAnalysis();
         };
 
-        // --- THEME & NAVIGATION ---
         function switchNav(tabId) {
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.className = "nav-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5");
-            const activeBtn = document.getElementById(`nav-${tabId}`);
-            if(activeBtn) activeBtn.className = "nav-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-sm transition flex items-center gap-1.5";
-            if(tabId === 'challenge' || tabId === 'learning') {
+            document.querySelectorAll('.nav-btn').forEach(function(btn) {
+                btn.className = "nav-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition flex items-center gap-1.5";
+            });
+            const activeBtn = document.getElementById("nav-" + tabId);
+            if (activeBtn) {
+                activeBtn.className = "nav-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-sm transition flex items-center gap-1.5";
+            }
+            if (tabId === 'challenge' || tabId === 'learning') {
                 toggleLearningDashboard(true);
             }
         }
 
         function toggleDarkMode() {
-            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            currentTheme = (currentTheme === 'dark') ? 'light' : 'dark';
             localStorage.setItem('ns_theme', currentTheme);
             applyTheme(currentTheme);
         }
@@ -709,43 +700,67 @@
         function applyTheme(theme) {
             const body = document.body;
             const themeIcon = document.getElementById('theme-icon');
-            if(theme === 'light') {
+            if (theme === 'light') {
                 body.classList.remove('dark', 'bg-[#0F172A]', 'text-slate-100');
                 body.classList.add('light', 'bg-slate-100', 'text-slate-800');
-                themeIcon.className = "fa-solid fa-sun";
+                if (themeIcon) themeIcon.className = "fa-solid fa-sun";
             } else {
                 body.classList.remove('light', 'bg-slate-100', 'text-slate-800');
                 body.classList.add('dark', 'bg-[#0F172A]', 'text-slate-100');
-                themeIcon.className = "fa-solid fa-moon";
+                if (themeIcon) themeIcon.className = "fa-solid fa-moon";
             }
         }
 
-        // --- GAMIFICATION DASHBOARD & PROFILE ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.classList.toggle('-translate-x-full');
+        }
+
         function toggleLearningDashboard(show) {
-            document.getElementById('learning-dashboard-modal').classList.toggle('hidden', !show);
-            if(show) renderChallengesGrid();
+            const modal = document.getElementById('learning-dashboard-modal');
+            if (modal) modal.classList.toggle('hidden', !show);
+            if (show) renderChallengesGrid();
         }
 
         function updatePlayerHeaderUI() {
             const requiredXP = playerData.level * 500;
-            if(playerData.xp >= requiredXP) {
+            if (playerData.xp >= requiredXP) {
                 playerData.level++;
-                showNotification(`🎉 LEVEL UP! You reached Level ${playerData.level}!`);
+                showNotification("🎉 LEVEL UP! You reached Level " + playerData.level + "!");
             }
-            document.getElementById('header-xp-badge').innerText = `Level ${playerData.level} (${playerData.xp} XP)`;
-            document.getElementById('profile-name-text').innerText = playerData.name;
-            document.getElementById('profile-level-badge').innerText = `Level ${playerData.level} Student`;
-            document.getElementById('profile-xp-text').innerText = `${playerData.xp} / ${playerData.level * 500} XP`;
-            document.getElementById('profile-xp-bar').style.width = `${Math.min(100, (playerData.xp / (playerData.level * 500)) * 100)}%`;
-            document.getElementById('profile-score-num').innerText = playerData.totalScore;
-            document.getElementById('profile-streak-num').innerText = `🔥 ${playerData.streak}`;
-            document.getElementById('completed-count-text').innerText = `Completed: ${playerData.completedChallenges.length} / ${challengesList.length}`;
+            const headerBadge = document.getElementById('header-xp-badge');
+            if (headerBadge) headerBadge.innerText = "Level " + playerData.level + " (" + playerData.xp + " XP)";
+            
+            const profileName = document.getElementById('profile-name-text');
+            if (profileName) profileName.innerText = playerData.name;
+            
+            const profileLevel = document.getElementById('profile-level-badge');
+            if (profileLevel) profileLevel.innerText = "Level " + playerData.level + " Student";
+            
+            const profileXP = document.getElementById('profile-xp-text');
+            if (profileXP) profileXP.innerText = playerData.xp + " / " + (playerData.level * 500) + " XP";
+            
+            const profileBar = document.getElementById('profile-xp-bar');
+            if (profileBar) {
+                const pct = Math.min(100, (playerData.xp / (playerData.level * 500)) * 100);
+                profileBar.style.width = pct + "%";
+            }
+            
+            const scoreNum = document.getElementById('profile-score-num');
+            if (scoreNum) scoreNum.innerText = playerData.totalScore;
+            
+            const streakNum = document.getElementById('profile-streak-num');
+            if (streakNum) streakNum.innerText = "🔥 " + playerData.streak;
+            
+            const completedText = document.getElementById('completed-count-text');
+            if (completedText) completedText.innerText = "Completed: " + playerData.completedChallenges.length + " / " + challengesList.length;
+            
             localStorage.setItem('ns_player_data', JSON.stringify(playerData));
         }
 
         function editPlayerProfileName() {
             const newName = prompt("Enter your student name:", playerData.name);
-            if(newName && newName.trim() !== '') {
+            if (newName && newName.trim() !== '') {
                 playerData.name = newName.trim();
                 updatePlayerHeaderUI();
                 showNotification("Profile name updated!");
@@ -754,142 +769,156 @@
 
         function renderChallengesGrid() {
             const container = document.getElementById('challenges-grid');
+            if (!container) return;
             let html = '';
-            challengesList.forEach(ch => {
+            challengesList.forEach(function(ch) {
                 const isCompleted = playerData.completedChallenges.includes(ch.id);
-                html += `
-                    <div class="bg-slate-900 border ${isCompleted ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-slate-800'} p-4 rounded-xl flex flex-col justify-between space-y-3">
-                        <div>
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">${ch.category}</span>
-                                <span class="text-xs font-semibold ${isCompleted ? 'text-emerald-400' : 'text-amber-400'}">
-                                    ${isCompleted ? '<i class="fa-solid fa-circle-check"></i> Completed' : `🏆 ${ch.reward.score} Pts | ⚡ ${ch.reward.xp} XP`}
-                                </span>
-                            </div>
-                            <h3 class="font-bold text-slate-100 text-sm">${ch.title}</h3>
-                            <p class="text-xs text-slate-400 mt-1">${ch.objective}</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
-                            <span class="text-[11px] text-slate-500 font-mono">Difficulty: ${ch.difficulty}</span>
-                            <button onclick="startChallenge('${ch.id}')" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-white font-medium px-3.5 py-1.5 rounded-lg text-xs transition shadow">
-                                ${isCompleted ? 'Replay Challenge' : 'Start Challenge'}
-                            </button>
-                        </div>
-                    </div>
-                `;
+                html += '<div class="bg-slate-900 border ' + (isCompleted ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-slate-800') + ' p-4 rounded-xl flex flex-col justify-between space-y-3">' +
+                    '<div>' +
+                        '<div class="flex items-center justify-between mb-1.5">' +
+                            '<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">' + ch.category + '</span>' +
+                            '<span class="text-xs font-semibold ' + (isCompleted ? 'text-emerald-400' : 'text-amber-400') + '">' +
+                                (isCompleted ? '<i class="fa-solid fa-circle-check"></i> Completed' : '🏆 ' + ch.reward.score + ' Pts | ⚡ ' + ch.reward.xp + ' XP') +
+                            '</span>' +
+                        '</div>' +
+                        '<h3 class="font-bold text-slate-100 text-sm">' + ch.title + '</h3>' +
+                        '<p class="text-xs text-slate-400 mt-1">' + ch.objective + '</p>' +
+                    '</div>' +
+                    '<div class="flex items-center justify-between pt-2 border-t border-slate-800">' +
+                        '<span class="text-[11px] text-slate-500 font-mono">Difficulty: ' + ch.difficulty + '</span>' +
+                        '<button onclick="startChallenge(\'' + ch.id + '\')" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 text-white font-medium px-3.5 py-1.5 rounded-lg text-xs transition shadow">' +
+                            (isCompleted ? 'Replay Challenge' : 'Start Challenge') +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
             });
             container.innerHTML = html;
         }
 
         function startChallenge(chId) {
-            const ch = challengesList.find(c => c.id === chId);
-            if(!ch) return;
+            const ch = challengesList.find(function(c) { return c.id === chId; });
+            if (!ch) return;
             activeChallenge = ch;
             challengeSecondsElapsed = 0;
             challengeHintsUsed = 0;
             toggleLearningDashboard(false);
 
-            document.getElementById('active-challenge-banner').classList.remove('hidden');
-            document.getElementById('banner-challenge-title').innerText = ch.title;
-            document.getElementById('banner-challenge-objective').innerText = ch.objective;
-            document.getElementById('hint-count-badge').innerText = ch.hints.length;
+            const banner = document.getElementById('active-challenge-banner');
+            if (banner) banner.classList.remove('hidden');
+            
+            const titleEl = document.getElementById('banner-challenge-title');
+            if (titleEl) titleEl.innerText = ch.title;
+            
+            const objEl = document.getElementById('banner-challenge-objective');
+            if (objEl) objEl.innerText = ch.objective;
+            
+            const hintBadge = document.getElementById('hint-count-badge');
+            if (hintBadge) hintBadge.innerText = ch.hints.length;
 
-            if(challengeTimerInterval) clearInterval(challengeTimerInterval);
-            challengeTimerInterval = setInterval(() => {
+            if (challengeTimerInterval) clearInterval(challengeTimerInterval);
+            challengeTimerInterval = setInterval(function() {
                 challengeSecondsElapsed++;
                 const mins = String(Math.floor(challengeSecondsElapsed / 60)).padStart(2, '0');
                 const secs = String(challengeSecondsElapsed % 60).padStart(2, '0');
-                document.getElementById('challenge-timer-display').innerText = `⏱️ ${mins}:${secs}`;
+                const timerEl = document.getElementById('challenge-timer-display');
+                if (timerEl) timerEl.innerText = '⏱️ ' + mins + ':' + secs;
             }, 1000);
 
-            showNotification(`Challenge Started: ${ch.title}`);
+            showNotification("Challenge Started: " + ch.title);
         }
 
         function quitActiveChallenge() {
-            if(challengeTimerInterval) clearInterval(challengeTimerInterval);
+            if (challengeTimerInterval) clearInterval(challengeTimerInterval);
             activeChallenge = null;
-            document.getElementById('active-challenge-banner').classList.add('hidden');
+            const banner = document.getElementById('active-challenge-banner');
+            if (banner) banner.classList.add('hidden');
             showNotification("Challenge aborted.");
         }
 
         function getChallengeHint() {
-            if(!activeChallenge) return;
-            if(challengeHintsUsed < activeChallenge.hints.length) {
+            if (!activeChallenge) return;
+            if (challengeHintsUsed < activeChallenge.hints.length) {
                 const hint = activeChallenge.hints[challengeHintsUsed];
                 challengeHintsUsed++;
-                document.getElementById('hint-count-badge').innerText = activeChallenge.hints.length - challengeHintsUsed;
-                showNotification(`💡 Hint ${challengeHintsUsed}: ${hint}`);
+                const badge = document.getElementById('hint-count-badge');
+                if (badge) badge.innerText = activeChallenge.hints.length - challengeHintsUsed;
+                showNotification("💡 Hint " + challengeHintsUsed + ": " + hint);
             } else {
                 showNotification("No more hints available for this challenge.");
             }
         }
 
         function checkChallengeAnswer() {
-            if(!activeChallenge) return;
+            if (!activeChallenge) return;
             const req = activeChallenge.requirements;
             let passed = true;
             let failReason = "";
 
-            if(req.devices) {
-                for(let reqDev of req.devices) {
-                    const foundCount = devices.filter(d => d.type.toLowerCase() === reqDev.type.toLowerCase()).length;
-                    if(foundCount < reqDev.count) {
+            if (req.devices) {
+                for (let i = 0; i < req.devices.length; i++) {
+                    const reqDev = req.devices[i];
+                    const foundCount = devices.filter(function(d) {
+                        return d.type.toLowerCase() === reqDev.type.toLowerCase();
+                    }).length;
+                    if (foundCount < reqDev.count) {
                         passed = false;
-                        failReason = `Need at least ${reqDev.count} ${reqDev.type}(s). Found ${foundCount}.`;
+                        failReason = "Need at least " + reqDev.count + " " + reqDev.type + "(s). Found " + foundCount + ".";
                         break;
                     }
                 }
             }
 
-            if(passed && req.connections) {
-                if(connections.length < req.connections) {
+            if (passed && req.connections) {
+                if (connections.length < req.connections) {
                     passed = false;
-                    failReason = `Need at least ${req.connections} connection(s). Current: ${connections.length}.`;
+                    failReason = "Need at least " + req.connections + " connection(s). Current: " + connections.length + ".";
                 }
             }
 
-            if(passed && req.topology) {
+            if (passed && req.topology) {
                 const detected = detectTopologyAutomatically();
-                if(!detected || detected.detected !== req.topology) {
+                if (!detected || detected.detected !== req.topology) {
                     passed = false;
-                    failReason = `Target topology is ${req.topology}, but detected is ${detected?.detected || 'CUSTOM'}.`;
+                    failReason = "Target topology is " + req.topology + ", but detected is " + (detected ? detected.detected : 'CUSTOM') + ".";
                 }
             }
 
-            if(passed && req.ipConfigured) {
-                const configuredCount = devices.filter(d => d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress)).length;
-                if(configuredCount < req.ipConfigured) {
+            if (passed && req.ipConfigured) {
+                const configuredCount = devices.filter(function(d) {
+                    return d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress);
+                }).length;
+                if (configuredCount < req.ipConfigured) {
                     passed = false;
-                    failReason = `Need at least ${req.ipConfigured} configured device(s) with valid IP.`;
+                    failReason = "Need at least " + req.ipConfigured + " configured device(s) with valid IP.";
                 }
             }
 
-            if(passed) {
-                if(challengeTimerInterval) clearInterval(challengeTimerInterval);
+            if (passed) {
+                if (challengeTimerInterval) clearInterval(challengeTimerInterval);
                 const scoreEarned = Math.max(50, activeChallenge.reward.score - (challengeHintsUsed * 15));
                 const xpEarned = activeChallenge.reward.xp;
 
                 playerData.totalScore += scoreEarned;
                 playerData.xp += xpEarned;
-                if(!playerData.completedChallenges.includes(activeChallenge.id)) {
+                if (!playerData.completedChallenges.includes(activeChallenge.id)) {
                     playerData.completedChallenges.push(activeChallenge.id);
                 }
                 updatePlayerHeaderUI();
 
-                openModal("🎉 Challenge Completed!", `Congratulations! You successfully solved "${activeChallenge.title}".\n\nReward Earned: +${scoreEarned} Score, +${xpEarned} XP!`, "fa-solid fa-trophy text-amber-400", "Continue", "bg-amber-500", () => {
+                openModal("🎉 Challenge Completed!", "Congratulations! You successfully solved \"" + activeChallenge.title + "\".\n\nReward Earned: +" + scoreEarned + " Score, +" + xpEarned + " XP!", "fa-solid fa-trophy text-amber-400", "Continue", "bg-amber-500", function() {
                     closeModal();
                     quitActiveChallenge();
                     toggleLearningDashboard(true);
                 });
             } else {
-                openModal("❌ Not Quite Right", `Your network doesn't meet the challenge requirements yet.\n\nReason: ${failReason}\n\nCheck hints if you are stuck!`, "fa-solid fa-triangle-exclamation text-rose-400", "Keep Trying", "bg-rose-500", () => {
+                openModal("❌ Not Quite Right", "Your network doesn't meet the challenge requirements yet.\n\nReason: " + failReason + "\n\nCheck hints if you are stuck!", "fa-solid fa-triangle-exclamation text-rose-400", "Keep Trying", "bg-rose-500", function() {
                     closeModal();
                 });
             }
         }
 
         function resetLearningProgress() {
-            openModal("Reset Learning Progress?", "All XP, scores, completed challenges, and badges will be reset.", "fa-solid fa-rotate-right text-rose-400", "Reset", "bg-rose-500", () => {
+            openModal("Reset Learning Progress?", "All XP, scores, completed challenges, and badges will be reset.", "fa-solid fa-rotate-right text-rose-400", "Reset", "bg-rose-500", function() {
                 playerData = { name: "Network Student", level: 1, xp: 0, totalScore: 0, completedChallenges: [], badges: [], streak: 0 };
                 updatePlayerHeaderUI();
                 renderChallengesGrid();
@@ -898,12 +927,12 @@
             });
         }
 
-        // --- IP VALIDATION & CALCULATION ---
         function validateIPAddress(ip) {
             if (!ip || typeof ip !== 'string') return false;
             const parts = ip.trim().split('.');
             if (parts.length !== 4) return false;
-            for (let part of parts) {
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
                 if (!/^\d+$/.test(part)) return false;
                 const num = parseInt(part, 10);
                 if (num < 0 || num > 255) return false;
@@ -913,47 +942,82 @@
         }
 
         function validateSubnetMask(mask) {
-            const valid = ['255.255.255.0', '255.255.255.192', '255.255.255.224', '255.255.255.240', '255.255.255.248', '255.255.255.252', '255.255.0.0', '255.0.0.0'];
+            if (!mask || typeof mask !== 'string') return false;
+            const valid = ['255.255.255.0', '255.255.255.128', '255.255.255.192', '255.255.255.224', '255.255.255.240', '255.255.255.248', '255.255.255.252', '255.255.0.0', '255.0.0.0'];
             return valid.includes(mask.trim());
         }
 
-        function ipToInt(ip) { return ip.split('.').reduce((acc, octet) => ((acc << 8) + parseInt(octet, 10)) >>> 0, 0); }
-        function intToIp(int) { return [(int >>> 24) & 255, (int >>> 16) & 255, (int >>> 8) & 255, int & 255].join('.'); }
-        function getNetworkAddress(ip, mask) { return validateIPAddress(ip) && validateSubnetMask(mask) ? intToIp(ipToInt(ip) & ipToInt(mask)) : null; }
-        function getCIDR(mask) { const m = ipToInt(mask); let c = 0; for(let i=31; i>=0; i--) if((m & (1 << i)) !== 0) c++; return '/' + c; }
+        function ipToInt(ip) {
+            return ip.split('.').reduce(function(acc, octet) {
+                return ((acc << 8) + parseInt(octet, 10)) >>> 0;
+            }, 0);
+        }
+
+        function intToIp(intVal) {
+            return [
+                (intVal >>> 24) & 255,
+                (intVal >>> 16) & 255,
+                (intVal >>> 8) & 255,
+                intVal & 255
+            ].join('.');
+        }
+
+        function getNetworkAddress(ip, mask) {
+            if (validateIPAddress(ip) && validateSubnetMask(mask)) {
+                return intToIp((ipToInt(ip) & ipToInt(mask)) >>> 0);
+            }
+            return null;
+        }
+
+        function getCIDR(mask) {
+            const m = ipToInt(mask);
+            let count = 0;
+            for (let i = 31; i >= 0; i--) {
+                if ((m & (1 << i)) !== 0) count++;
+            }
+            return '/' + count;
+        }
 
         function detectIPConflicts() {
             const map = {};
-            devices.forEach(d => {
-                if(d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress)) {
-                    if(!map[d.network.ipAddress]) map[d.network.ipAddress] = [];
-                    map[d.network.ipAddress].push(d);
+            devices.forEach(function(d) {
+                if (d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress)) {
+                    const ip = d.network.ipAddress;
+                    if (!map[ip]) map[ip] = [];
+                    map[ip].push(d);
                 }
             });
             return map;
         }
 
-        // --- WORKSPACE & DRAG AND DROP ---
         function filterDevices(query) {
             const q = query.toLowerCase();
-            document.querySelectorAll('.device-card').forEach(card => {
+            document.querySelectorAll('.device-card').forEach(function(card) {
                 card.style.display = card.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
             });
         }
 
         function handleLibraryDragStart(event, type, category) {
-            event.dataTransfer.setData('text/plain', JSON.stringify({ type, category }));
+            event.dataTransfer.setData('text/plain', JSON.stringify({ type: type, category: category }));
         }
 
-        function handleWorkspaceDragOver(event) { event.preventDefault(); document.getElementById('workspace-canvas').classList.add('drag-over'); }
-        function handleWorkspaceDragLeave(event) { document.getElementById('workspace-canvas').classList.remove('drag-over'); }
+        function handleWorkspaceDragOver(event) {
+            event.preventDefault();
+            const canvas = document.getElementById('workspace-canvas');
+            if (canvas) canvas.classList.add('drag-over');
+        }
+
+        function handleWorkspaceDragLeave(event) {
+            const canvas = document.getElementById('workspace-canvas');
+            if (canvas) canvas.classList.remove('drag-over');
+        }
 
         function handleWorkspaceDrop(event) {
             event.preventDefault();
-            document.getElementById('workspace-canvas').classList.remove('drag-over');
+            const canvas = document.getElementById('workspace-canvas');
+            if (canvas) canvas.classList.remove('drag-over');
             try {
                 const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-                const canvas = document.getElementById('workspace-canvas');
                 const rect = canvas.getBoundingClientRect();
                 const x = event.clientX - rect.left + canvas.scrollLeft - 60;
                 const y = event.clientY - rect.top + canvas.scrollTop - 60;
@@ -963,19 +1027,28 @@
 
         function addDeviceFromClick(type, category) {
             const canvas = document.getElementById('workspace-canvas');
-            addNewDeviceToWorkspace(type, category, canvas.scrollLeft + 150 + (devices.length * 20) % 300, canvas.scrollTop + 150 + (devices.length * 20) % 200);
+            if (!canvas) return;
+            const x = canvas.scrollLeft + 150 + ((devices.length * 20) % 300);
+            const y = canvas.scrollTop + 150 + ((devices.length * 20) % 200);
+            addNewDeviceToWorkspace(type, category, x, y);
         }
 
         function addNewDeviceToWorkspace(type, category, x, y) {
-            let key = type.toLowerCase().replace(/\s+/g, '');
+            const key = type.toLowerCase().replace(/\s+/g, '');
             deviceCounters[key] = (deviceCounters[key] || 0) + 1;
             const count = deviceCounters[key];
             const nameMap = { 'PC': 'PC', 'Laptop': 'LAPTOP', 'Server': 'SERVER', 'Smartphone': 'PHONE', 'Router': 'ROUTER', 'Switch': 'SWITCH', 'Hub': 'HUB', 'Access Point': 'AP' };
-            const uniqueName = `${nameMap[type] || type.toUpperCase()}-${count}`;
-            const uniqueId = `dev-${key}-${Date.now()}`;
+            const uniqueName = (nameMap[type] || type.toUpperCase()) + '-' + count;
+            const uniqueId = 'dev-' + key + '-' + Date.now();
 
             const newDev = {
-                id: uniqueId, type, category, name: uniqueName, x, y, status: 'ready',
+                id: uniqueId,
+                type: type,
+                category: category,
+                name: uniqueName,
+                x: x,
+                y: y,
+                status: 'ready',
                 network: { ipAddress: '', subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' },
                 connections: []
             };
@@ -986,50 +1059,58 @@
             inspectDevice(uniqueId);
             detectTopologyAutomatically();
             runAiNetworkAnalysis();
-            showNotification(`Added ${uniqueName}`);
+            showNotification("Added " + uniqueName);
         }
 
-        // --- RENDER WORKSPACE & SVG CONNECTIONS ---
         function renderWorkspace() {
             const container = document.getElementById('nodes-container');
             const emptyHint = document.getElementById('workspace-empty-hint');
-            emptyHint.style.display = devices.length === 0 ? 'flex' : 'none';
+            if (emptyHint) emptyHint.style.display = (devices.length === 0) ? 'flex' : 'none';
 
             const conflicts = detectIPConflicts();
             let configuredCount = 0;
 
-            devices.forEach(d => {
-                if(d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress)) {
-                    if(conflicts[d.network.ipAddress] && conflicts[d.network.ipAddress].length > 1) d.status = 'conflict';
-                    else { d.status = 'configured'; configuredCount++; }
-                } else d.status = 'ready';
+            devices.forEach(function(d) {
+                if (d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress)) {
+                    if (conflicts[d.network.ipAddress] && conflicts[d.network.ipAddress].length > 1) {
+                        d.status = 'conflict';
+                    } else {
+                        d.status = 'configured';
+                        configuredCount++;
+                    }
+                } else {
+                    d.status = 'ready';
+                }
             });
 
-            document.getElementById('status-device-count').innerText = devices.length;
-            document.getElementById('status-connection-count').innerText = connections.length;
-            document.getElementById('status-configured-count').innerText = configuredCount;
+            const devCountEl = document.getElementById('status-device-count');
+            if (devCountEl) devCountEl.innerText = devices.length;
+            
+            const connCountEl = document.getElementById('status-connection-count');
+            if (connCountEl) connCountEl.innerText = connections.length;
+            
+            const cfgCountEl = document.getElementById('status-configured-count');
+            if (cfgCountEl) cfgCountEl.innerText = configuredCount;
 
             let html = '';
-            devices.forEach(dev => {
+            devices.forEach(function(dev) {
                 const isSelected = dev.id === selectedDeviceId;
                 let badge = 'bg-slate-500';
-                if(dev.status === 'configured') badge = 'bg-emerald-500';
-                if(dev.status === 'conflict') badge = 'bg-rose-500 animate-ping';
+                if (dev.status === 'configured') badge = 'bg-emerald-500';
+                if (dev.status === 'conflict') badge = 'bg-rose-500 animate-ping';
 
-                html += `
-                    <div id="${dev.id}" 
-                         onmousedown="startDraggingNode(event, '${dev.id}')"
-                         onclick="handleNodeClick(event, '${dev.id}')"
-                         class="canvas-node absolute bg-slate-900/95 hover:bg-slate-800 border-2 ${isSelected ? 'border-cyan-400 node-selected' : 'border-slate-700'} p-3 rounded-2xl cursor-pointer shadow-xl transition-all group w-32 flex flex-col items-center text-center z-10 animate-pop pointer-events-auto"
-                         style="left: ${dev.x}px; top: ${dev.y}px;">
-                        <div class="absolute -top-2 -right-2 w-4 h-4 rounded-full ${badge} border-2 border-slate-900"></div>
-                        <div class="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xl mb-2"><i class="${getDeviceIconClass(dev.type)}"></i></div>
-                        <span class="text-xs font-bold text-slate-100 truncate w-full">${dev.name}</span>
-                        <span class="text-[10px] text-cyan-400 font-mono mt-0.5 truncate w-full">${dev.network?.ipAddress || 'No IP'}</span>
-                    </div>
-                `;
+                html += '<div id="' + dev.id + '" ' +
+                    'onmousedown="startDraggingNode(event, \'' + dev.id + '\')" ' +
+                    'onclick="handleNodeClick(event, \'' + dev.id + '\')" ' +
+                    'class="canvas-node absolute bg-slate-900/95 hover:bg-slate-800 border-2 ' + (isSelected ? 'border-cyan-400 node-selected' : 'border-slate-700') + ' p-3 rounded-2xl cursor-pointer shadow-xl transition-all group w-32 flex flex-col items-center text-center z-10 animate-pop pointer-events-auto" ' +
+                    'style="left: ' + dev.x + 'px; top: ' + dev.y + 'px;">' +
+                    '<div class="absolute -top-2 -right-2 w-4 h-4 rounded-full ' + badge + ' border-2 border-slate-900"></div>' +
+                    '<div class="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xl mb-2"><i class="' + getDeviceIconClass(dev.type) + '"></i></div>' +
+                    '<span class="text-xs font-bold text-slate-100 truncate w-full">' + dev.name + '</span>' +
+                    '<span class="text-[10px] text-cyan-400 font-mono mt-0.5 truncate w-full">' + (dev.network && dev.network.ipAddress ? dev.network.ipAddress : 'No IP') + '</span>' +
+                '</div>';
             });
-            container.innerHTML = html;
+            if (container) container.innerHTML = html;
             renderConnectionsSVG();
         }
 
@@ -1049,43 +1130,49 @@
 
         function renderConnectionsSVG() {
             const svg = document.getElementById('connection-svg');
+            if (!svg) return;
             let svgHtml = '';
-            connections.forEach(conn => {
-                const src = devices.find(d => d.id === conn.source);
-                const tgt = devices.find(d => d.id === conn.target);
-                if(src && tgt) {
-                    const x1 = src.x + 64, y1 = src.y + 60, x2 = tgt.x + 64, y2 = tgt.y + 60;
-                    const midX = (x1 + x2) / 2, midY = (y1 + y2) / 2;
+            connections.forEach(function(conn) {
+                const src = devices.find(function(d) { return d.id === conn.source; });
+                const tgt = devices.find(function(d) { return d.id === conn.target; });
+                if (src && tgt) {
+                    const x1 = src.x + 64;
+                    const y1 = src.y + 60;
+                    const x2 = tgt.x + 64;
+                    const y2 = tgt.y + 60;
+                    const midX = (x1 + x2) / 2;
+                    const midY = (y1 + y2) / 2;
                     const isSel = conn.id === selectedConnectionId;
+                    
                     let stroke = '#38BDF8';
-                    if(conn.type === 'crossover') stroke = '#8B5CF6';
-                    if(conn.type === 'fiber') stroke = '#F59E0B';
-                    if(conn.type === 'wireless') stroke = '#22C55E';
+                    if (conn.type === 'crossover') stroke = '#8B5CF6';
+                    if (conn.type === 'fiber') stroke = '#F59E0B';
+                    if (conn.type === 'wireless') stroke = '#22C55E';
 
-                    svgHtml += `
-                        <g class="cursor-pointer" onclick="handleConnectionClick(event, '${conn.id}')">
-                            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="12" />
-                            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${isSel ? 4 : 2.5}" stroke-dasharray="${conn.type==='wireless'?'5,5':'none'}" />
-                            <rect x="${midX - 20}" y="${midY - 9}" width="40" height="18" rx="4" fill="#111827" stroke="${stroke}" stroke-width="1" />
-                            <text x="${midX}" y="${midY + 3}" fill="#E2E8F0" font-size="8" text-anchor="middle" font-weight="600">${conn.type.toUpperCase()}</text>
-                        </g>
-                    `;
+                    svgHtml += '<g class="cursor-pointer" onclick="handleConnectionClick(event, \'' + conn.id + '\')">' +
+                        '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="transparent" stroke-width="14" />' +
+                        '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + stroke + '" stroke-width="' + (isSel ? 4 : 2.5) + '" stroke-dasharray="' + (conn.type === 'wireless' ? '5,5' : 'none') + '" />' +
+                        '<rect x="' + (midX - 22) + '" y="' + (midY - 9) + '" width="44" height="18" rx="4" fill="#111827" stroke="' + stroke + '" stroke-width="1" />' +
+                        '<text x="' + midX + '" y="' + (midY + 3) + '" fill="#E2E8F0" font-size="8" text-anchor="middle" font-weight="600">' + conn.type.toUpperCase() + '</text>' +
+                    '</g>';
                 }
             });
 
-            if(isConnectionMode && connectionSourceId) {
-                const src = devices.find(d => d.id === connectionSourceId);
-                if(src) svgHtml += `<line x1="${src.x+64}" y1="${src.y+60}" x2="${mouseX}" y2="${mouseY}" stroke="#38BDF8" stroke-width="2.5" stroke-dasharray="5,5" class="animate-pulse pointer-events-none" />`;
+            if (isConnectionMode && connectionSourceId) {
+                const src = devices.find(function(d) { return d.id === connectionSourceId; });
+                if (src) {
+                    svgHtml += '<line x1="' + (src.x + 64) + '" y1="' + (src.y + 60) + '" x2="' + mouseX + '" y2="' + mouseY + '" stroke="#38BDF8" stroke-width="2.5" stroke-dasharray="5,5" class="animate-pulse pointer-events-none" />';
+                }
             }
             svg.innerHTML = svgHtml;
         }
 
-        // --- DRAG & DROP REPOSITIONING ---
         function startDraggingNode(event, nodeId) {
-            if(isConnectionMode || activeTool === 'connect') return;
+            if (isConnectionMode || activeTool === 'connect') return;
             event.stopPropagation();
             activeDraggingNodeId = nodeId;
             const el = document.getElementById(nodeId);
+            if (!el) return;
             dragOffsetX = event.clientX - el.offsetLeft;
             dragOffsetY = event.clientY - el.offsetTop;
             document.addEventListener('mousemove', onNodeMouseMove);
@@ -1093,55 +1180,89 @@
         }
 
         function onNodeMouseMove(event) {
-            if(!activeDraggingNodeId) return;
-            const canvas = document.getElementById('workspace-canvas');
-            let x = Math.max(10, event.clientX - dragOffsetX);
-            let y = Math.max(10, event.clientY - dragOffsetY);
-            const dev = devices.find(d => d.id === activeDraggingNodeId);
-            if(dev) {
-                dev.x = x; dev.y = y;
+            if (!activeDraggingNodeId) return;
+            const x = Math.max(10, event.clientX - dragOffsetX);
+            const y = Math.max(10, event.clientY - dragOffsetY);
+            const dev = devices.find(function(d) { return d.id === activeDraggingNodeId; });
+            if (dev) {
+                dev.x = x;
+                dev.y = y;
                 const el = document.getElementById(activeDraggingNodeId);
-                if(el) { el.style.left = `${x}px`; el.style.top = `${y}px`; }
+                if (el) {
+                    el.style.left = x + 'px';
+                    el.style.top = y + 'px';
+                }
                 renderConnectionsSVG();
             }
         }
 
-        function onNodeMouseUp() { activeDraggingNodeId = null; document.removeEventListener('mousemove', onNodeMouseMove); document.removeEventListener('mouseup', onNodeMouseUp); }
+        function onNodeMouseUp() {
+            activeDraggingNodeId = null;
+            document.removeEventListener('mousemove', onNodeMouseMove);
+            document.removeEventListener('mouseup', onNodeMouseUp);
+        }
+
         function handleWorkspaceMouseMove(event) {
             const canvas = document.getElementById('workspace-canvas');
+            if (!canvas) return;
             const rect = canvas.getBoundingClientRect();
             mouseX = event.clientX - rect.left + canvas.scrollLeft;
             mouseY = event.clientY - rect.top + canvas.scrollTop;
-            if(isConnectionMode && connectionSourceId) renderConnectionsSVG();
+            if (isConnectionMode && connectionSourceId) {
+                renderConnectionsSVG();
+            }
         }
 
-        // --- CONNECTION SYSTEM ---
         function setTool(toolName) {
             activeTool = toolName;
             isConnectionMode = (toolName === 'connect');
-            document.getElementById('connection-banner').style.display = isConnectionMode ? 'flex' : 'none';
-            if(isConnectionMode) showNotification("Connection Mode Active");
+            const banner = document.getElementById('connection-banner');
+            if (banner) banner.style.display = isConnectionMode ? 'flex' : 'none';
+            if (isConnectionMode) showNotification("Connection Mode Active");
         }
 
-        function cancelConnectionMode() { isConnectionMode = false; connectionSourceId = null; document.getElementById('connection-banner').style.display = 'none'; setTool('select'); }
+        function cancelConnectionMode() {
+            isConnectionMode = false;
+            connectionSourceId = null;
+            const banner = document.getElementById('connection-banner');
+            if (banner) banner.style.display = 'none';
+            setTool('select');
+        }
 
         function handleNodeClick(event, nodeId) {
             event.stopPropagation();
-            if(isConnectionMode) {
-                if(!connectionSourceId) {
+            if (isConnectionMode) {
+                if (!connectionSourceId) {
                     connectionSourceId = nodeId;
-                    showNotification(`Source: ${devices.find(d=>d.id===nodeId).name}. Select target...`);
+                    const srcDev = devices.find(function(d) { return d.id === nodeId; });
+                    showNotification("Source: " + (srcDev ? srcDev.name : nodeId) + ". Select target device...");
                 } else {
-                    if(connectionSourceId === nodeId) { showNotification("Cannot connect device to itself"); return; }
-                    const type = document.getElementById('cable-type-select').value;
-                    const exists = connections.find(c => (c.source===connectionSourceId && c.target===nodeId) || (c.source===nodeId && c.target===connectionSourceId));
-                    if(exists) { showNotification("Connection already exists"); return; }
-                    connections.push({ id: `conn-${Date.now()}`, source: connectionSourceId, target: nodeId, type, status: 'connected' });
+                    if (connectionSourceId === nodeId) {
+                        showNotification("Cannot connect device to itself");
+                        return;
+                    }
+                    const cableSelect = document.getElementById('cable-type-select');
+                    const cableType = cableSelect ? cableSelect.value : 'straight';
+                    const exists = connections.find(function(c) {
+                        return (c.source === connectionSourceId && c.target === nodeId) ||
+                               (c.source === nodeId && c.target === connectionSourceId);
+                    });
+                    if (exists) {
+                        showNotification("Connection already exists between these devices");
+                        return;
+                    }
+                    connections.push({
+                        id: 'conn-' + Date.now(),
+                        source: connectionSourceId,
+                        target: nodeId,
+                        type: cableType,
+                        status: 'connected'
+                    });
                     topologyState.modified = true;
                     renderWorkspace();
                     detectTopologyAutomatically();
                     runAiNetworkAnalysis();
-                    showNotification("Connection created!");
+                    showNotification("Connection created successfully!");
                     connectionSourceId = null;
                 }
                 return;
@@ -1157,44 +1278,84 @@
             inspectConnection(connId);
         }
 
-        // --- CONFIGURATION PANEL ---
         function inspectDevice(nodeId) {
-            selectedDeviceId = nodeId; selectedConnectionId = null; renderWorkspace();
-            const dev = devices.find(d => d.id === nodeId);
-            if(!dev) return;
-            document.getElementById('config-empty-state').classList.add('hidden');
-            document.getElementById('config-device-state').classList.remove('hidden');
-            document.getElementById('config-connection-state').classList.add('hidden');
+            selectedDeviceId = nodeId;
+            selectedConnectionId = null;
+            renderWorkspace();
+            
+            const dev = devices.find(function(d) { return d.id === nodeId; });
+            if (!dev) return;
 
-            document.getElementById('cfg-device-title').innerText = dev.name;
-            document.getElementById('cfg-device-type').innerText = dev.type;
-            document.getElementById('input-dev-name').value = dev.name;
-            document.getElementById('input-ip').value = dev.network?.ipAddress || '';
-            document.getElementById('input-subnet').value = dev.network?.subnetMask || '255.255.255.0';
-            document.getElementById('input-gateway').value = dev.network?.gateway || '';
-            updateNetworkCard(dev.network?.ipAddress, dev.network?.subnetMask);
+            const emptyState = document.getElementById('config-empty-state');
+            if (emptyState) emptyState.classList.add('hidden');
+            
+            const devState = document.getElementById('config-device-state');
+            if (devState) devState.classList.remove('hidden');
+            
+            const connState = document.getElementById('config-connection-state');
+            if (connState) connState.classList.add('hidden');
+
+            const titleEl = document.getElementById('cfg-device-title');
+            if (titleEl) titleEl.innerText = dev.name;
+            
+            const typeEl = document.getElementById('cfg-device-type');
+            if (typeEl) typeEl.innerText = dev.type;
+            
+            const nameInput = document.getElementById('input-dev-name');
+            if (nameInput) nameInput.value = dev.name;
+            
+            const ipInput = document.getElementById('input-ip');
+            if (ipInput) ipInput.value = (dev.network && dev.network.ipAddress) ? dev.network.ipAddress : '';
+            
+            const subnetInput = document.getElementById('input-subnet');
+            if (subnetInput) subnetInput.value = (dev.network && dev.network.subnetMask) ? dev.network.subnetMask : '255.255.255.0';
+            
+            const gwInput = document.getElementById('input-gateway');
+            if (gwInput) gwInput.value = (dev.network && dev.network.gateway) ? dev.network.gateway : '';
+            
+            updateNetworkCard(dev.network ? dev.network.ipAddress : '', dev.network ? dev.network.subnetMask : '255.255.255.0');
         }
 
         function updateNetworkCard(ip, mask) {
             const card = document.getElementById('network-info-card');
-            if(validateIPAddress(ip) && validateSubnetMask(mask)) {
-                card.classList.remove('hidden');
-                document.getElementById('calc-net-address').innerText = getNetworkAddress(ip, mask);
-                document.getElementById('calc-cidr').innerText = getCIDR(mask);
-            } else card.classList.add('hidden');
+            if (validateIPAddress(ip) && validateSubnetMask(mask)) {
+                if (card) card.classList.remove('hidden');
+                const netAddrEl = document.getElementById('calc-net-address');
+                if (netAddrEl) netAddrEl.innerText = getNetworkAddress(ip, mask);
+                
+                const cidrEl = document.getElementById('calc-cidr');
+                if (cidrEl) cidrEl.innerText = getCIDR(mask);
+            } else {
+                if (card) card.classList.add('hidden');
+            }
         }
 
         function applyConfiguration() {
-            if(!selectedDeviceId) return;
-            const dev = devices.find(d => d.id === selectedDeviceId);
-            const name = document.getElementById('input-dev-name').value.trim();
-            const ip = document.getElementById('input-ip').value.trim();
-            const subnet = document.getElementById('input-subnet').value.trim();
-            const gateway = document.getElementById('input-gateway').value.trim();
+            if (!selectedDeviceId) return;
+            const dev = devices.find(function(d) { return d.id === selectedDeviceId; });
+            if (!dev) return;
 
-            if(ip !== '' && !validateIPAddress(ip)) { showNotification("Invalid IP Address"); return; }
-            if(name) dev.name = name;
-            dev.network = { ipAddress: ip, subnetMask: subnet, gateway, dns: '8.8.8.8' };
+            const nameInput = document.getElementById('input-dev-name');
+            const ipInput = document.getElementById('input-ip');
+            const subnetInput = document.getElementById('input-subnet');
+            const gatewayInput = document.getElementById('input-gateway');
+
+            const name = nameInput ? nameInput.value.trim() : dev.name;
+            const ip = ipInput ? ipInput.value.trim() : '';
+            const subnet = subnetInput ? subnetInput.value.trim() : '255.255.255.0';
+            const gateway = gatewayInput ? gatewayInput.value.trim() : '';
+
+            if (ip !== '' && !validateIPAddress(ip)) {
+                showNotification("Invalid IP Address format!");
+                return;
+            }
+            if (subnet !== '' && !validateSubnetMask(subnet)) {
+                showNotification("Invalid Subnet Mask format!");
+                return;
+            }
+
+            if (name) dev.name = name;
+            dev.network = { ipAddress: ip, subnetMask: subnet, gateway: gateway, dns: '8.8.8.8' };
             renderWorkspace();
             inspectDevice(selectedDeviceId);
             runAiNetworkAnalysis();
@@ -1202,225 +1363,443 @@
         }
 
         function inspectConnection(connId) {
-            const conn = connections.find(c => c.id === connId);
-            if(!conn) return;
-            document.getElementById('config-empty-state').classList.add('hidden');
-            document.getElementById('config-device-state').classList.add('hidden');
-            document.getElementById('config-connection-state').classList.remove('hidden');
-            document.getElementById('input-conn-type').value = conn.type;
+            const conn = connections.find(function(c) { return c.id === connId; });
+            if (!conn) return;
+
+            const emptyState = document.getElementById('config-empty-state');
+            if (emptyState) emptyState.classList.add('hidden');
+            
+            const devState = document.getElementById('config-device-state');
+            if (devState) devState.classList.add('hidden');
+            
+            const connState = document.getElementById('config-connection-state');
+            if (connState) connState.classList.remove('hidden');
+            
+            const connTypeInput = document.getElementById('input-conn-type');
+            if (connTypeInput) connTypeInput.value = conn.type;
         }
 
         function applyConnectionConfiguration() {
-            if(!selectedConnectionId) return;
-            const conn = connections.find(c => c.id === selectedConnectionId);
-            conn.type = document.getElementById('input-conn-type').value;
+            if (!selectedConnectionId) return;
+            const conn = connections.find(function(c) { return c.id === selectedConnectionId; });
+            if (!conn) return;
+            const connTypeInput = document.getElementById('input-conn-type');
+            if (connTypeInput) conn.type = connTypeInput.value;
             renderWorkspace();
-            showNotification("Connection updated!");
+            showNotification("Connection cable updated!");
         }
 
-        // --- TOPOLOGY GENERATOR & DETECTION ---
-        function toggleTopologyModal(show) { document.getElementById('topology-modal').classList.toggle('hidden', !show); }
+        function toggleTopologyModal(show) {
+            const modal = document.getElementById('topology-modal');
+            if (modal) modal.classList.toggle('hidden', !show);
+        }
 
         function updateTopologyDescription() {
-            const type = document.getElementById('gen-topology-type').value;
+            const select = document.getElementById('gen-topology-type');
+            const type = select ? select.value : 'STAR';
             const descs = {
                 STAR: "All client end devices connect directly to a central switch or router.",
                 RING: "Devices are connected in a closed circular loop where data travels in sequence.",
                 MESH: "Every device is interconnected with multiple other nodes for high redundancy.",
                 TREE: "Hierarchical structure with central root routing down to distribution switches and clients.",
-                BUS: "Devices tap into a single centralized backbone cable.",
-                HYBRID: "Combination of Star and Bus network architectures."
+                BUS: "Devices connect along a shared horizontal backbone cable."
             };
-            document.getElementById('gen-topology-desc').innerText = descs[type] || '';
+            const descEl = document.getElementById('gen-topology-desc');
+            if (descEl) descEl.innerText = descs[type] || '';
         }
 
         function executeGenerateTopology() {
-            if(devices.length > 0) {
-                openModal("Replace Topology?", "Generating a new topology will clear existing devices and connections.", "fa-solid fa-wand-magic-sparkles text-purple-400", "Generate", "bg-purple-600", () => {
+            if (devices.length > 0) {
+                openModal("Replace Topology?", "Generating a new topology will clear existing devices and connections.", "fa-solid fa-wand-magic-sparkles text-purple-400", "Generate", "bg-purple-600", function() {
                     closeModal();
                     runTopologyGenerator();
                 });
-            } else runTopologyGenerator();
+            } else {
+                runTopologyGenerator();
+            }
         }
 
         function runTopologyGenerator() {
-            const type = document.getElementById('gen-topology-type').value;
-            const count = parseInt(document.getElementById('gen-device-count').value, 10) || 6;
-            const centralType = document.getElementById('gen-central-device').value;
+            const typeSelect = document.getElementById('gen-topology-type');
+            const type = typeSelect ? typeSelect.value : 'STAR';
+            
+            const countInput = document.getElementById('gen-device-count');
+            const count = countInput ? Math.min(12, Math.max(2, parseInt(countInput.value, 10) || 6)) : 6;
+            
+            const centralSelect = document.getElementById('gen-central-device');
+            const centralType = centralSelect ? centralSelect.value : 'Switch';
 
-            devices = []; connections = [];
+            devices = [];
+            connections = [];
             deviceCounters = { pc: 0, laptop: 0, server: 0, smartphone: 0, router: 0, switch: 0, hub: 0, accesspoint: 0 };
             
-            const canvasW = 800, canvasH = 500;
-            const cx = canvasW / 2, cy = canvasH / 2;
+            const cx = 400;
+            const cy = 250;
 
-            if(type === 'STAR') {
+            if (type === 'STAR') {
                 deviceCounters[centralType.toLowerCase()] = 1;
-                const centralId = `dev-${centralType.toLowerCase()}-${Date.now()}`;
-                devices.push({ id: centralId, type: centralType, category: 'Network Device', name: `${centralType.toUpperCase()}-1`, x: cx - 60, y: cy - 60, status: 'ready', network: { ipAddress: '192.168.1.1', subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' }, connections: [] });
+                const centralId = 'dev-' + centralType.toLowerCase() + '-' + Date.now();
+                devices.push({
+                    id: centralId,
+                    type: centralType,
+                    category: 'Network Device',
+                    name: centralType.toUpperCase() + '-1',
+                    x: cx - 60,
+                    y: cy - 60,
+                    status: 'ready',
+                    network: { ipAddress: '192.168.1.1', subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' },
+                    connections: []
+                });
 
-                const radius = 180;
-                for(let i=0; i<count; i++) {
-                    const angle = (i * 2 * Math.PI) / count;
-                    const x = cx + radius * Math.cos(angle) - 60;
-                    const y = cy + radius * Math.sin(angle) - 60;
-                    deviceCounters.pc++;
-                    const pcId = `dev-pc-${Date.now()}-${i}`;
-                    devices.push({ id: pcId, type: 'PC', category: 'End Device', name: `PC-${i+1}`, x, y, status: 'configured', network: { ipAddress: `192.168.1.${10+i}`, subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' }, connections: [] });
-                    connections.push({ id: `conn-${i}`, source: centralId, target: pcId, type: 'straight', status: 'connected' });
-                }
-            } else if(type === 'RING') {
-                const radius = 180;
-                for(let i=0; i<count; i++) {
-                    const angle = (i * 2 * Math.PI) / count;
-                    const x = cx + radius * Math.cos(angle) - 60;
-                    const y = cy + radius * Math.sin(angle) - 60;
-                    deviceCounters.pc++;
-                    devices.push({ id: `dev-ring-${i}`, type: 'PC', category: 'End Device', name: `PC-${i+1}`, x, y, status: 'configured', network: { ipAddress: `192.168.1.${10+i}`, subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' }, connections: [] });
-                }
-                for(let i=0; i<count; i++) {
-                    const next = (i + 1) % count;
-                    connections.push({ id: `conn-ring-${i}`, source: devices[i].id, target: devices[next].id, type: 'crossover', status: 'connected' });
-                }
-            } else if(type === 'MESH') {
-                const limit = Math.min(count, 8);
                 const radius = 170;
-                for(let i=0; i<limit; i++) {
+                for (let i = 0; i < count; i++) {
+                    const angle = (i * 2 * Math.PI) / count;
+                    const x = cx + radius * Math.cos(angle) - 60;
+                    const y = cy + radius * Math.sin(angle) - 60;
+                    deviceCounters.pc++;
+                    const pcId = 'dev-pc-' + Date.now() + '-' + i;
+                    devices.push({
+                        id: pcId,
+                        type: 'PC',
+                        category: 'End Device',
+                        name: 'PC-' + (i + 1),
+                        x: Math.round(x),
+                        y: Math.round(y),
+                        status: 'configured',
+                        network: { ipAddress: '192.168.1.' + (10 + i), subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' },
+                        connections: []
+                    });
+                    connections.push({ id: 'conn-' + i, source: centralId, target: pcId, type: 'straight', status: 'connected' });
+                }
+            } else if (type === 'RING') {
+                const radius = 170;
+                for (let i = 0; i < count; i++) {
+                    const angle = (i * 2 * Math.PI) / count;
+                    const x = cx + radius * Math.cos(angle) - 60;
+                    const y = cy + radius * Math.sin(angle) - 60;
+                    deviceCounters.pc++;
+                    devices.push({
+                        id: 'dev-ring-' + i,
+                        type: 'PC',
+                        category: 'End Device',
+                        name: 'PC-' + (i + 1),
+                        x: Math.round(x),
+                        y: Math.round(y),
+                        status: 'configured',
+                        network: { ipAddress: '192.168.1.' + (10 + i), subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' },
+                        connections: []
+                    });
+                }
+                for (let i = 0; i < count; i++) {
+                    const next = (i + 1) % count;
+                    connections.push({ id: 'conn-ring-' + i, source: devices[i].id, target: devices[next].id, type: 'crossover', status: 'connected' });
+                }
+            } else if (type === 'MESH') {
+                const limit = Math.min(count, 6);
+                const radius = 160;
+                for (let i = 0; i < limit; i++) {
                     const angle = (i * 2 * Math.PI) / limit;
-                    devices.push({ id: `dev-mesh-${i}`, type: 'PC', category: 'End Device', name: `PC-${i+1}`, x: cx + radius * Math.cos(angle) - 60, y: cy + radius * Math.sin(angle) - 60, status: 'configured', network: { ipAddress: `192.168.1.${10+i}`, subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' }, connections: [] });
+                    devices.push({
+                        id: 'dev-mesh-' + i,
+                        type: 'PC',
+                        category: 'End Device',
+                        name: 'PC-' + (i + 1),
+                        x: Math.round(cx + radius * Math.cos(angle) - 60),
+                        y: Math.round(cy + radius * Math.sin(angle) - 60),
+                        status: 'configured',
+                        network: { ipAddress: '192.168.1.' + (10 + i), subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' },
+                        connections: []
+                    });
                 }
                 let cId = 0;
-                for(let i=0; i<devices.length; i++) {
-                    for(let j=i+1; j<devices.length; j++) {
-                        connections.push({ id: `conn-mesh-${cId++}`, source: devices[i].id, target: devices[j].id, type: 'crossover', status: 'connected' });
+                for (let i = 0; i < devices.length; i++) {
+                    for (let j = i + 1; j < devices.length; j++) {
+                        connections.push({ id: 'conn-mesh-' + (cId++), source: devices[i].id, target: devices[j].id, type: 'crossover', status: 'connected' });
                     }
                 }
-            } else {
-                runTopologyGenerator();
-                return;
+            } else if (type === 'TREE') {
+                const rootId = 'dev-router-' + Date.now();
+                devices.push({ id: rootId, type: 'Router', category: 'Network Device', name: 'ROUTER-1', x: cx - 60, y: 50, status: 'ready', network: { ipAddress: '192.168.1.1', subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' }, connections: [] });
+                
+                const sw1Id = 'dev-sw-1-' + Date.now();
+                const sw2Id = 'dev-sw-2-' + Date.now();
+                devices.push({ id: sw1Id, type: 'Switch', category: 'Network Device', name: 'SWITCH-1', x: cx - 180, y: 180, status: 'ready', network: { ipAddress: '', subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' }, connections: [] });
+                devices.push({ id: sw2Id, type: 'Switch', category: 'Network Device', name: 'SWITCH-2', x: cx + 60, y: 180, status: 'ready', network: { ipAddress: '', subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' }, connections: [] });
+                
+                connections.push({ id: 'conn-tree-1', source: rootId, target: sw1Id, type: 'straight', status: 'connected' });
+                connections.push({ id: 'conn-tree-2', source: rootId, target: sw2Id, type: 'straight', status: 'connected' });
+
+                for (let i = 0; i < Math.min(count, 4); i++) {
+                    const targetSw = (i < 2) ? sw1Id : sw2Id;
+                    const xOffset = (i < 2) ? (cx - 240 + i * 110) : (cx + 10 + (i - 2) * 110);
+                    const pcId = 'dev-pc-tree-' + i;
+                    devices.push({ id: pcId, type: 'PC', category: 'End Device', name: 'PC-' + (i + 1), x: xOffset, y: 320, status: 'configured', network: { ipAddress: '192.168.1.' + (10 + i), subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' }, connections: [] });
+                    connections.push({ id: 'conn-tree-pc-' + i, source: targetSw, target: pcId, type: 'straight', status: 'connected' });
+                }
+            } else if (type === 'BUS') {
+                const busCount = Math.min(count, 5);
+                for (let i = 0; i < busCount; i++) {
+                    const pcId = 'dev-bus-' + i;
+                    devices.push({ id: pcId, type: 'PC', category: 'End Device', name: 'PC-' + (i + 1), x: 120 + i * 130, y: 220, status: 'configured', network: { ipAddress: '192.168.1.' + (10 + i), subnetMask: '255.255.255.0', gateway: '192.168.1.1', dns: '8.8.8.8' }, connections: [] });
+                    if (i > 0) {
+                        connections.push({ id: 'conn-bus-' + i, source: devices[i - 1].id, target: pcId, type: 'crossover', status: 'connected' });
+                    }
+                }
             }
 
             topologyState = { current: type, generated: true, modified: false, confidence: 100 };
-            document.getElementById('status-topology-type').innerText = type;
             toggleTopologyModal(false);
             renderWorkspace();
             runAiNetworkAnalysis();
-            showNotification(`Successfully generated ${type} Topology!`);
+            showNotification("Successfully generated " + type + " Topology!");
         }
 
         function detectTopologyAutomatically() {
-            if(devices.length === 0) {
-                document.getElementById('detected-topology-badge').innerText = "Detected Topology: Empty Workspace";
+            if (devices.length === 0) {
+                const badge = document.getElementById('detected-topology-badge');
+                if (badge) badge.innerText = "Detected Topology: Empty Workspace";
                 return { detected: "EMPTY", confidence: 100 };
             }
 
             const n = devices.length;
             const e = connections.length;
             let detected = "CUSTOM";
-            let confidence = 80;
 
-            if(n >= 3) {
+            if (n >= 3) {
                 let maxDegree = 0;
                 const degrees = {};
-                devices.forEach(d => degrees[d.id] = 0);
-                connections.forEach(c => { degrees[c.source]++; degrees[c.target]++; });
-                Object.keys(degrees).forEach(id => { if(degrees[id] > maxDegree) maxDegree = degrees[id]; });
+                devices.forEach(function(d) { degrees[d.id] = 0; });
+                connections.forEach(function(c) {
+                    if (degrees[c.source] !== undefined) degrees[c.source]++;
+                    if (degrees[c.target] !== undefined) degrees[c.target]++;
+                });
+                Object.keys(degrees).forEach(function(id) {
+                    if (degrees[id] > maxDegree) maxDegree = degrees[id];
+                });
 
-                if(maxDegree >= n - 2 && e === n - 1) detected = "STAR";
-                else if(n >= 4 && e === n) detected = "RING";
-                else if(e === (n * (n - 1)) / 2) detected = "MESH";
+                if (maxDegree >= n - 2 && e === n - 1) detected = "STAR";
+                else if (n >= 4 && e === n) detected = "RING";
+                else if (e === (n * (n - 1)) / 2) detected = "MESH";
             }
 
             topologyState.detected = detected;
-            document.getElementById('detected-topology-badge').innerText = `Detected Topology: ${detected}`;
-            return { detected, confidence };
+            const badge = document.getElementById('detected-topology-badge');
+            if (badge) badge.innerText = "Detected Topology: " + detected;
+            return { detected: detected, confidence: 80 };
         }
 
-        // --- TERMINAL SYSTEM ---
         function toggleTerminalModal(show) {
-            document.getElementById('terminal-modal').classList.toggle('hidden', !show);
-            if(show) {
+            const modal = document.getElementById('terminal-modal');
+            if (modal) modal.classList.toggle('hidden', !show);
+            if (show) {
                 populateTerminalSources();
-                document.getElementById('terminal-input').focus();
+                const input = document.getElementById('terminal-input');
+                if (input) input.focus();
             }
         }
 
         function populateTerminalSources() {
             const select = document.getElementById('terminal-source-select');
+            if (!select) return;
             let html = '';
-            devices.filter(d => ['PC', 'Laptop', 'Server', 'Smartphone'].includes(d.type)).forEach(pc => {
-                html += `<option value="${pc.id}">${pc.name} (${pc.network?.ipAddress || 'No IP'})</option>`;
+            devices.filter(function(d) {
+                return ['PC', 'Laptop', 'Server', 'Smartphone'].includes(d.type);
+            }).forEach(function(pc) {
+                html += '<option value="' + pc.id + '">' + pc.name + ' (' + (pc.network && pc.network.ipAddress ? pc.network.ipAddress : 'No IP') + ')</option>';
             });
             select.innerHTML = html || '<option value="">No End Devices</option>';
         }
 
-        function handleTerminalKeydown(e) { if(e.key === 'Enter') executeTerminalInput(); }
+        function handleTerminalKeydown(e) {
+            if (e.key === 'Enter') executeTerminalInput();
+        }
 
         function executeTerminalInput() {
             const input = document.getElementById('terminal-input');
+            if (!input) return;
             const cmd = input.value.trim();
-            if(!cmd) return;
-            appendLog(`C:\\Network> ${cmd}`, 'text-slate-100');
+            if (!cmd) return;
+            appendLog('C:\\Network> ' + cmd, 'text-slate-100');
             input.value = '';
 
             const parts = cmd.split(/\s+/);
             const action = parts[0].toLowerCase();
             const arg = parts[1];
 
-            if(action === 'ping') {
-                if(!arg) { appendLog("Usage: ping [IP]", 'text-rose-400'); return; }
+            if (action === 'ping') {
+                if (!arg) {
+                    appendLog("Error: Missing target IP address. Usage: ping [IP]", 'text-rose-400 font-semibold');
+                    return;
+                }
                 runPingSimulation(arg);
-            } else if(action === 'help') {
-                appendLog("Commands: ping [ip], devices, connections, clear", 'text-amber-400');
-            } else if(action === 'clear') {
-                document.getElementById('terminal-log-container').innerHTML = '';
-            } else if(action === 'devices') {
-                devices.forEach(d => appendLog(` - ${d.name} (${d.type}): ${d.network?.ipAddress || 'No IP'}`, 'text-slate-300'));
+            } else if (action === 'help') {
+                appendLog("Available commands:\n  ping [ip]      - Send ping ICMP packets to destination\n  devices        - List all devices and configured IPs\n  connections    - View all active cable connections\n  clear          - Clear terminal logs", 'text-amber-400');
+            } else if (action === 'clear') {
+                const logContainer = document.getElementById('terminal-log-container');
+                if (logContainer) logContainer.innerHTML = '';
+            } else if (action === 'devices') {
+                devices.forEach(function(d) {
+                    appendLog(" - " + d.name + " (" + d.type + "): " + (d.network && d.network.ipAddress ? d.network.ipAddress : 'No IP configured'), 'text-slate-300');
+                });
+            } else if (action === 'connections') {
+                connections.forEach(function(c) {
+                    const s = devices.find(function(d) { return d.id === c.source; });
+                    const t = devices.find(function(d) { return d.id === c.target; });
+                    appendLog(" - " + (s ? s.name : c.source) + " <---> " + (t ? t.name : c.target) + " [" + c.type + "]", 'text-cyan-300');
+                });
             } else {
-                appendLog(`Command not recognized: ${action}`, 'text-rose-400');
+                appendLog("Error: Command not recognized '" + action + "'. Type 'help' for available commands.", 'text-rose-400');
             }
         }
 
-        function appendLog(html, colorClass='text-slate-200') {
+        function appendLog(html, colorClass) {
             const container = document.getElementById('terminal-log-container');
+            if (!container) return;
             const div = document.createElement('div');
-            div.className = colorClass;
-            div.innerHTML = html;
+            div.className = colorClass || 'text-slate-200';
+            div.innerHTML = html.replace(/\n/g, '<br>');
             container.appendChild(div);
             const screen = document.getElementById('terminal-screen');
-            screen.scrollTop = screen.scrollHeight;
+            if (screen) screen.scrollTop = screen.scrollHeight;
         }
 
         function runPingSimulation(targetIP) {
-            const srcId = document.getElementById('terminal-source-select').value;
-            const srcDev = devices.find(d => d.id === srcId);
-            if(!srcDev || !srcDev.network?.ipAddress) { appendLog("Source device lacks valid IP", 'text-rose-400'); return; }
+            const srcSelect = document.getElementById('terminal-source-select');
+            const srcId = srcSelect ? srcSelect.value : null;
+            const srcDev = devices.find(function(d) { return d.id === srcId; });
 
-            appendLog(`Pinging ${targetIP} with 32 bytes of data:`, 'text-slate-300');
-            const targetDev = devices.find(d => d.network?.ipAddress === targetIP);
-
-            if(!targetDev) {
-                let c = 0;
-                const timer = setInterval(() => {
-                    appendLog("Request timed out.", 'text-rose-400');
-                    if(++c === 4) clearInterval(timer);
-                }, 500);
+            if (!srcDev) {
+                appendLog("Error: No source end device selected or available in the workspace.", 'text-rose-400 font-bold');
+                return;
+            }
+            if (!srcDev.network || !srcDev.network.ipAddress || !validateIPAddress(srcDev.network.ipAddress)) {
+                appendLog("Error: Source device (" + srcDev.name + ") lacks a valid IP configuration. Please assign an IP address in the configuration panel first.", 'text-rose-400 font-semibold');
                 return;
             }
 
+            // Target IP syntax validation
+            if (!validateIPAddress(targetIP)) {
+                appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+                appendLog("Invalid IP address format '" + targetIP + "'. Please provide a valid IPv4 address (e.g. 192.168.1.20).", 'text-rose-400 font-bold');
+                appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 1, Received = 0, Lost = 1 (100% loss)", 'text-rose-400');
+                return;
+            }
+
+            // Loopback / self ping
+            if (srcDev.network.ipAddress === targetIP) {
+                appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+                let count = 0;
+                const selfTimer = setInterval(function() {
+                    count++;
+                    appendLog("Reply from " + targetIP + ": bytes=32 time<1ms TTL=128", 'text-emerald-400');
+                    if (count === 4) {
+                        clearInterval(selfTimer);
+                        appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)", 'text-emerald-300 font-bold');
+                    }
+                }, 350);
+                return;
+            }
+
+            // IP Conflict check on source
+            const conflicts = detectIPConflicts();
+            if (conflicts[srcDev.network.ipAddress] && conflicts[srcDev.network.ipAddress].length > 1) {
+                appendLog("Error: IP Conflict detected! Source IP (" + srcDev.network.ipAddress + ") is assigned to multiple devices. Ping aborted.", 'text-rose-400 font-bold');
+                return;
+            }
+
+            // Destination device lookup
+            const targetDev = devices.find(function(d) {
+                return d.network && d.network.ipAddress === targetIP;
+            });
+
+            if (!targetDev) {
+                appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+                let c = 0;
+                const timeoutTimer = setInterval(function() {
+                    c++;
+                    appendLog("Request timed out. (Destination IP '" + targetIP + "' not found on any active device)", 'text-rose-400');
+                    if (c === 4) {
+                        clearInterval(timeoutTimer);
+                        appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)", 'text-rose-400 font-bold');
+                    }
+                }, 450);
+                return;
+            }
+
+            // Physical path connectivity check
+            const hasPath = checkDeviceConnectivity(srcDev.id, targetDev.id);
+            if (!hasPath) {
+                appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+                let c = 0;
+                const unreachableTimer = setInterval(function() {
+                    c++;
+                    appendLog("Destination host unreachable. (No physical cable connection between " + srcDev.name + " and " + targetDev.name + ")", 'text-amber-400');
+                    if (c === 4) {
+                        clearInterval(unreachableTimer);
+                        appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)", 'text-rose-400 font-bold');
+                    }
+                }, 450);
+                return;
+            }
+
+            // Subnet and network segment verification (Strict different network check)
+            const srcSubnet = (srcDev.network && srcDev.network.subnetMask) ? srcDev.network.subnetMask : '255.255.255.0';
+            const tgtSubnet = (targetDev.network && targetDev.network.subnetMask) ? targetDev.network.subnetMask : '255.255.255.0';
+            const srcNet = getNetworkAddress(srcDev.network.ipAddress, srcSubnet);
+            const tgtNet = getNetworkAddress(targetDev.network.ipAddress, tgtSubnet);
+
+            if (srcNet !== tgtNet) {
+                appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+                let c = 0;
+                const diffNetTimer = setInterval(function() {
+                    c++;
+                    appendLog("Destination host unreachable. (Subnet mismatch: source network " + srcNet + " is different from target network " + tgtNet + " — requires a configured router gateway)", 'text-amber-400');
+                    if (c === 4) {
+                        clearInterval(diffNetTimer);
+                        appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)", 'text-rose-400 font-bold');
+                    }
+                }, 450);
+                return;
+            }
+
+            // Successful ping simulation (Same subnet and valid path)
+            appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
             let count = 0;
-            const timer = setInterval(() => {
+            const successTimer = setInterval(function() {
                 count++;
                 const time = Math.floor(Math.random() * 4) + 2;
-                appendLog(`Reply from ${targetIP}: bytes=32 time=${time}ms TTL=128`, 'text-emerald-400');
-                if(count === 4) {
-                    clearInterval(timer);
-                    appendLog(`Ping complete. 0% packet loss.`, 'text-emerald-300 font-bold');
+                appendLog("Reply from " + targetIP + ": bytes=32 time=" + time + "ms TTL=128", 'text-emerald-400');
+                if (count === 4) {
+                    clearInterval(successTimer);
+                    appendLog("Ping statistics for " + targetIP + ":\n  Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)\n  Approximate round trip times: Min = 2ms, Max = 5ms, Avg = 3ms", 'text-emerald-300 font-bold');
                 }
-            }, 600);
+            }, 500);
         }
 
-        // --- STREAMING_CHUNK:Implementing Smart Network Troubleshooting & AI Assistant Engine (Phase 8)... ---
+        function checkDeviceConnectivity(srcId, tgtId) {
+            if (srcId === tgtId) return true;
+            const visited = new Set();
+            const queue = [srcId];
+            visited.add(srcId);
+
+            while (queue.length > 0) {
+                const curr = queue.shift();
+                if (curr === tgtId) return true;
+
+                connections.forEach(function(conn) {
+                    let nextId = null;
+                    if (conn.source === curr) nextId = conn.target;
+                    else if (conn.target === curr) nextId = conn.source;
+
+                    if (nextId && !visited.has(nextId)) {
+                        visited.add(nextId);
+                        queue.push(nextId);
+                    }
+                });
+            }
+            return false;
+        }
+
         let diagnosticState = {
             healthScore: 100,
             problems: [],
@@ -1429,7 +1808,8 @@
 
         function toggleAssistantDrawer(show) {
             const drawer = document.getElementById('assistant-drawer');
-            if(show) {
+            if (!drawer) return;
+            if (show) {
                 drawer.classList.remove('translate-x-full');
                 runAiNetworkAnalysis();
             } else {
@@ -1439,51 +1819,52 @@
 
         function runAiNetworkAnalysis() {
             clearProblemHighlights();
-            let problems = [];
+            const problems = [];
             let score = 100;
 
-            // 1. Check IP Conflicts
             const conflicts = detectIPConflicts();
-            Object.keys(conflicts).forEach(ip => {
-                if(conflicts[ip].length > 1) {
-                    const names = conflicts[ip].map(d => d.name).join(', ');
+            Object.keys(conflicts).forEach(function(ip) {
+                if (conflicts[ip].length > 1) {
+                    const names = conflicts[ip].map(function(d) { return d.name; }).join(', ');
                     problems.push({
                         id: 'ip-conflict',
                         severity: 'critical',
                         title: 'Duplicate IP Address',
-                        desc: `IP ${ip} is shared by multiple devices: ${names}.`,
+                        desc: 'IP ' + ip + ' is shared by multiple devices: ' + names + '.',
                         fix: 'Assign a unique IPv4 address to each device.',
-                        devices: conflicts[ip].map(d => d.id)
+                        devices: conflicts[ip].map(function(d) { return d.id; })
                     });
                     score -= 25;
                 }
             });
 
-            // 2. Check Disconnected Devices
-            devices.forEach(d => {
-                const hasConn = connections.some(c => c.source === d.id || c.target === d.id);
-                if(!hasConn && devices.length > 1) {
+            devices.forEach(function(d) {
+                const hasConn = connections.some(function(c) {
+                    return c.source === d.id || c.target === d.id;
+                });
+                if (!hasConn && devices.length > 1) {
                     problems.push({
                         id: 'disconnected',
                         severity: 'high',
                         title: 'Disconnected Device',
-                        desc: `Device "${d.name}" has no physical cable connections.`,
-                        fix: 'Use the Connect tool to link this device to the network.',
+                        desc: 'Device "' + d.name + '" has no physical cable connections.',
+                        fix: 'Use the Connect tool to link this device to a switch or router.',
                         devices: [d.id]
                     });
                     score -= 15;
                 }
             });
 
-            // 3. Check Unconfigured IP on End Devices
-            devices.filter(d => ['PC', 'Laptop', 'Server', 'Smartphone'].includes(d.type)).forEach(d => {
-                if(!d.network || !d.network.ipAddress || !validateIPAddress(d.network.ipAddress)) {
+            devices.filter(function(d) {
+                return ['PC', 'Laptop', 'Server', 'Smartphone'].includes(d.type);
+            }).forEach(function(d) {
+                if (!d.network || !d.network.ipAddress || !validateIPAddress(d.network.ipAddress)) {
                     problems.push({
                         id: 'no-ip',
                         severity: 'medium',
                         title: 'Missing IP Configuration',
-                        desc: `End device "${d.name}" lacks a valid IPv4 address.`,
-                        fix: 'Click the device and configure its IP Address in the panel.',
+                        desc: 'End device "' + d.name + '" lacks a valid IPv4 address.',
+                        fix: 'Click the device and enter an IP address in the configuration panel.',
                         devices: [d.id]
                     });
                     score -= 10;
@@ -1494,79 +1875,98 @@
             diagnosticState.healthScore = score;
             diagnosticState.problems = problems;
 
-            // Update UI
-            document.getElementById('status-health-score').innerText = `${score}%`;
+            const scoreEl = document.getElementById('status-health-score');
+            if (scoreEl) scoreEl.innerText = score + '%';
+            
             const healthBar = document.getElementById('assistant-health-bar');
-            healthBar.style.width = `${score}%`;
+            if (healthBar) healthBar.style.width = score + '%';
+            
             const healthTitle = document.getElementById('assistant-health-title');
-
-            if(score >= 90) { healthBar.className = "bg-emerald-500 h-full transition-all duration-500"; healthTitle.className = "text-lg font-bold text-emerald-400"; healthTitle.innerText = `${score}% (EXCELLENT)`; }
-            else if(score >= 70) { healthBar.className = "bg-amber-500 h-full transition-all duration-500"; healthTitle.className = "text-lg font-bold text-amber-400"; healthTitle.innerText = `${score}% (GOOD)`; }
-            else if(score >= 40) { healthBar.className = "bg-orange-500 h-full transition-all duration-500"; healthTitle.className = "text-lg font-bold text-orange-400"; healthTitle.innerText = `${score}% (WARNING)`; }
-            else { healthBar.className = "bg-rose-500 h-full transition-all duration-500"; healthTitle.className = "text-lg font-bold text-rose-400"; healthTitle.innerText = `${score}% (CRITICAL)`; }
+            if (healthTitle && healthBar) {
+                if (score >= 90) {
+                    healthBar.className = "bg-emerald-500 h-full transition-all duration-500";
+                    healthTitle.className = "text-lg font-bold text-emerald-400";
+                    healthTitle.innerText = score + "% (EXCELLENT)";
+                } else if (score >= 70) {
+                    healthBar.className = "bg-amber-500 h-full transition-all duration-500";
+                    healthTitle.className = "text-lg font-bold text-amber-400";
+                    healthTitle.innerText = score + "% (GOOD)";
+                } else if (score >= 40) {
+                    healthBar.className = "bg-orange-500 h-full transition-all duration-500";
+                    healthTitle.className = "text-lg font-bold text-orange-400";
+                    healthTitle.innerText = score + "% (WARNING)";
+                } else {
+                    healthBar.className = "bg-rose-500 h-full transition-all duration-500";
+                    healthTitle.className = "text-lg font-bold text-rose-400";
+                    healthTitle.innerText = score + "% (CRITICAL)";
+                }
+            }
 
             renderAssistantFeed(problems);
         }
 
         function renderAssistantFeed(problems) {
             const feed = document.getElementById('assistant-chat-feed');
-            let html = `
-                <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">
-                    <div class="font-bold text-cyan-400 flex items-center justify-between">
-                        <span>📊 Diagnostic Summary</span>
-                        <span class="text-slate-400">${problems.length} Issue(s) Found</span>
-                    </div>
-            `;
+            if (!feed) return;
+            let html = '<div class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2">' +
+                '<div class="font-bold text-cyan-400 flex items-center justify-between">' +
+                    '<span>📊 Diagnostic Summary</span>' +
+                    '<span class="text-slate-400">' + problems.length + ' Issue(s) Found</span>' +
+                '</div>';
 
-            if(problems.length === 0) {
-                html += `<p class="text-emerald-400 font-medium">🟢 All systems nominal! No network faults detected.</p>`;
+            if (problems.length === 0) {
+                html += '<p class="text-emerald-400 font-medium">🟢 All systems nominal! No network faults detected.</p>';
             } else {
-                problems.forEach((p, idx) => {
-                    let badgeColor = p.severity === 'critical' ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-                    html += `
-                        <div class="bg-slate-950 border border-slate-800/80 p-2.5 rounded-lg space-y-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-bold text-slate-200">${p.title}</span>
-                                <span class="text-[9px] uppercase px-1.5 py-0.5 rounded border ${badgeColor}">${p.severity}</span>
-                            </div>
-                            <p class="text-slate-400 text-[11px]">${p.desc}</p>
-                            <div class="pt-1 flex items-center justify-between">
-                                <span class="text-cyan-400 text-[10px]">💡 ${p.fix}</span>
-                                ${p.devices && p.devices.length > 0 ? `<button onclick="highlightProblemDevices(['${p.devices.join("','")}'])" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-[10px]">Highlight</button>` : ''}
-                            </div>
-                        </div>
-                    `;
+                problems.forEach(function(p, idx) {
+                    const badgeColor = (p.severity === 'critical') ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+                    const devIdsJoined = (p.devices && p.devices.length > 0) ? p.devices.join(',') : '';
+                    html += '<div class="bg-slate-950 border border-slate-800/80 p-2.5 rounded-lg space-y-1">' +
+                        '<div class="flex items-center justify-between">' +
+                            '<span class="font-bold text-slate-200">' + p.title + '</span>' +
+                            '<span class="text-[9px] uppercase px-1.5 py-0.5 rounded border ' + badgeColor + '">' + p.severity + '</span>' +
+                        '</div>' +
+                        '<p class="text-slate-400 text-[11px]">' + p.desc + '</p>' +
+                        '<div class="pt-1 flex items-center justify-between">' +
+                            '<span class="text-cyan-400 text-[10px]">💡 ' + p.fix + '</span>' +
+                            (devIdsJoined ? '<button onclick="highlightProblemDevices(\'' + devIdsJoined + '\')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-[10px]">Highlight</button>' : '') +
+                        '</div>' +
+                    '</div>';
                 });
             }
-            html += `</div>`;
+            html += '</div>';
             feed.innerHTML = html;
         }
 
-        function highlightProblemDevices(deviceIds) {
+        function highlightProblemDevices(deviceIdsStr) {
             clearProblemHighlights();
-            deviceIds.forEach(id => {
+            const ids = (typeof deviceIdsStr === 'string') ? deviceIdsStr.split(',') : deviceIdsStr;
+            ids.forEach(function(id) {
                 const el = document.getElementById(id);
-                if(el) el.classList.add('problem-highlight');
+                if (el) el.classList.add('problem-highlight');
             });
             showNotification("Highlighted problem devices on workspace!");
         }
 
         function clearProblemHighlights() {
-            document.querySelectorAll('.canvas-node').forEach(node => node.classList.remove('problem-highlight'));
+            document.querySelectorAll('.canvas-node').forEach(function(node) {
+                node.classList.remove('problem-highlight');
+            });
         }
 
         function assistantPrompt(intent) {
-            if(intent === 'check-health') runAiNetworkAnalysis();
-            else if(intent === 'check-ip') {
-                const unconfigured = devices.filter(d => !d.network?.ipAddress);
-                appendAssistantChat(`🔍 IP Inspection: ${devices.length} total devices. ${unconfigured.length} missing IP configuration.`);
-            } else if(intent === 'check-conn') {
-                appendAssistantChat(`🔌 Cable Check: ${connections.length} active links in workspace.`);
+            if (intent === 'check-health') {
+                runAiNetworkAnalysis();
+            } else if (intent === 'check-ip') {
+                const unconfigured = devices.filter(function(d) { return !d.network || !d.network.ipAddress; });
+                appendAssistantChat("🔍 IP Inspection: " + devices.length + " total devices. " + unconfigured.length + " missing IP configuration.");
+            } else if (intent === 'check-conn') {
+                appendAssistantChat("🔌 Cable Check: " + connections.length + " active links in workspace.");
             }
         }
 
         function appendAssistantChat(msg) {
             const feed = document.getElementById('assistant-chat-feed');
+            if (!feed) return;
             const div = document.createElement('div');
             div.className = "bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-slate-200";
             div.innerText = msg;
@@ -1577,37 +1977,38 @@
         function startGuidedTroubleshoot() {
             toggleAssistantDrawer(true);
             const problems = diagnosticState.problems;
-            if(problems.length === 0) {
+            if (problems.length === 0) {
                 appendAssistantChat("🧭 Guided Fix: No network faults detected! Your topology is fully optimized.");
                 return;
             }
             const p = problems[0];
-            appendAssistantChat(`🧭 Step-by-Step Guidance:\n1. Problem: ${p.title}\n2. Details: ${p.desc}\n3. Action: ${p.fix}`);
-            if(p.devices) highlightProblemDevices(p.devices);
+            appendAssistantChat("🧭 Step-by-Step Guidance:\n1. Issue: " + p.title + "\n2. Details: " + p.desc + "\n3. Action: " + p.fix);
+            if (p.devices) highlightProblemDevices(p.devices);
         }
 
-        // --- STORAGE & MODALS ---
         function saveProject() {
-            localStorage.setItem('ns_project', JSON.stringify({ devices, connections, topologyState }));
+            localStorage.setItem('ns_project', JSON.stringify({
+                devices: devices,
+                connections: connections,
+                topologyState: topologyState
+            }));
             showNotification("Project saved to LocalStorage!");
         }
 
         function loadSavedProject() {
-            const saved = localStorage.getItem('ns_project');
-            if(saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    devices = data.devices || [];
-                    connections = data.connections || [];
-                    topologyState = data.topologyState || topologyState;
-                    renderWorkspace();
-                } catch(e) {}
+            const saved = safeGetJSON('ns_project', null);
+            if (saved) {
+                devices = saved.devices || [];
+                connections = saved.connections || [];
+                topologyState = saved.topologyState || topologyState;
+                renderWorkspace();
             }
         }
 
         function confirmResetSimulation() {
-            openModal("Reset Simulator?", "All devices and connections will be permanently removed.", "fa-solid fa-rotate-right text-amber-400", "Reset", "bg-amber-500", () => {
-                devices = []; connections = [];
+            openModal("Reset Simulator?", "All devices and connections will be permanently removed.", "fa-solid fa-rotate-right text-amber-400", "Reset", "bg-amber-500", function() {
+                devices = [];
+                connections = [];
                 localStorage.removeItem('ns_project');
                 renderWorkspace();
                 closeModal();
@@ -1617,11 +2018,14 @@
         }
 
         function confirmDeleteSelected() {
-            if(!selectedDeviceId) return;
-            const dev = devices.find(d => d.id === selectedDeviceId);
-            openModal("Delete Device?", `Remove ${dev.name}?`, "fa-solid fa-trash text-rose-400", "Delete", "bg-rose-500", () => {
-                devices = devices.filter(d => d.id !== selectedDeviceId);
-                connections = connections.filter(c => c.source !== selectedDeviceId && c.target !== selectedDeviceId);
+            if (!selectedDeviceId) return;
+            const dev = devices.find(function(d) { return d.id === selectedDeviceId; });
+            const devName = dev ? dev.name : "Device";
+            openModal("Delete Device?", "Remove " + devName + " and its connections?", "fa-solid fa-trash text-rose-400", "Delete", "bg-rose-500", function() {
+                devices = devices.filter(function(d) { return d.id !== selectedDeviceId; });
+                connections = connections.filter(function(c) {
+                    return c.source !== selectedDeviceId && c.target !== selectedDeviceId;
+                });
                 selectedDeviceId = null;
                 renderWorkspace();
                 closeModal();
@@ -1632,8 +2036,8 @@
         }
 
         function deleteSelectedConnection() {
-            if(!selectedConnectionId) return;
-            connections = connections.filter(c => c.id !== selectedConnectionId);
+            if (!selectedConnectionId) return;
+            connections = connections.filter(function(c) { return c.id !== selectedConnectionId; });
             selectedConnectionId = null;
             renderWorkspace();
             detectTopologyAutomatically();
@@ -1642,38 +2046,59 @@
         }
 
         function deleteSelectedEntity() {
-            if(selectedDeviceId) confirmDeleteSelected();
-            else if(selectedConnectionId) deleteSelectedConnection();
+            if (selectedDeviceId) confirmDeleteSelected();
+            else if (selectedConnectionId) deleteSelectedConnection();
         }
 
         function openModal(title, desc, icon, btnText, btnClass, callback) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-icon').innerHTML = `<i class="${icon}"></i>`;
+            const titleEl = document.getElementById('modal-title');
+            if (titleEl) titleEl.innerText = title;
+            
+            const descEl = document.getElementById('modal-desc');
+            if (descEl) descEl.innerText = desc;
+            
+            const iconEl = document.getElementById('modal-icon');
+            if (iconEl) iconEl.innerHTML = '<i class="' + icon + '"></i>';
+            
             const btn = document.getElementById('modal-confirm-btn');
-            btn.innerText = btnText;
-            btn.className = `flex-1 text-white font-medium py-2 px-3 rounded-xl text-xs transition ${btnClass}`;
-            btn.onclick = callback;
-            document.getElementById('confirmation-modal').classList.remove('hidden');
+            if (btn) {
+                btn.innerText = btnText;
+                btn.className = "flex-1 text-white font-medium py-2 px-3 rounded-xl text-xs transition " + btnClass;
+                btn.onclick = callback;
+            }
+            const modal = document.getElementById('confirmation-modal');
+            if (modal) modal.classList.remove('hidden');
         }
 
-        function closeModal() { document.getElementById('confirmation-modal').classList.add('hidden'); }
+        function closeModal() {
+            const modal = document.getElementById('confirmation-modal');
+            if (modal) modal.classList.add('hidden');
+        }
 
         function showNotification(msg) {
             const existing = document.getElementById('toast-notif');
-            if(existing) existing.remove();
+            if (existing) existing.remove();
             const t = document.createElement('div');
             t.id = 'toast-notif';
             t.className = 'fixed bottom-14 right-6 bg-[#111827] border border-cyan-500/40 text-slate-100 px-4 py-2.5 rounded-xl shadow-2xl text-xs z-50 flex items-center gap-2 animate-bounce';
-            t.innerHTML = `<i class="fa-solid fa-circle-check text-cyan-400"></i> <span>${msg}</span>`;
+            t.innerHTML = '<i class="fa-solid fa-circle-check text-cyan-400"></i> <span>' + msg + '</span>';
             document.body.appendChild(t);
-            setTimeout(() => t.remove(), 3000);
+            setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
         }
 
         function handleGlobalKeydown(e) {
-            if(e.key === 'Escape') { cancelConnectionMode(); closeModal(); toggleTopologyModal(false); toggleTerminalModal(false); toggleLearningDashboard(false); toggleAssistantDrawer(false); }
-            if(e.key === 'Delete' || e.key === 'Backspace') {
-                if(!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) deleteSelectedEntity();
+            if (e.key === 'Escape') {
+                cancelConnectionMode();
+                closeModal();
+                toggleTopologyModal(false);
+                toggleTerminalModal(false);
+                toggleLearningDashboard(false);
+                toggleAssistantDrawer(false);
+            }
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+                    deleteSelectedEntity();
+                }
             }
         }
     </script>
