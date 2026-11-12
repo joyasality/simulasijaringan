@@ -38,9 +38,107 @@
                 linear-gradient(to bottom, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
         }
         .light .workspace-grid {
+            background-color: #F8FAFC;
             background-image: 
-                linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+                linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+        }
+        .light ::-webkit-scrollbar-track { background: rgba(226, 232, 240, 0.7); }
+        .light ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.4); }
+        .light ::-webkit-scrollbar-thumb:hover { background: rgba(14, 165, 233, 0.65); }
+
+        /* Comprehensive Light Mode Overrides */
+        .light header,
+        .light aside,
+        .light footer,
+        .light .bg-\[\#111827\],
+        .light .bg-\[\#111827\]\/80,
+        .light .bg-\[\#111827\]\/95 {
+            background-color: rgba(255, 255, 255, 0.96) !important;
+        }
+        .light .bg-\[\#161B22\] { background-color: #F8FAFC !important; }
+        .light .bg-\[\#0B1120\] { background-color: #E2E8F0 !important; }
+        .light .bg-\[\#0F172A\],
+        .light main { background-color: #F1F5F9 !important; }
+        .light .bg-slate-950 { background-color: #F1F5F9 !important; }
+        .light .bg-slate-900,
+        .light .bg-slate-900\/95,
+        .light .bg-slate-900\/90,
+        .light .bg-slate-900\/80,
+        .light .bg-slate-900\/70,
+        .light .bg-slate-900\/60 {
+            background-color: #FFFFFF !important;
+        }
+        .light .bg-slate-800,
+        .light .bg-slate-800\/80 {
+            background-color: #E2E8F0 !important;
+        }
+        .light .hover\:bg-slate-800:hover,
+        .light .hover\:bg-slate-700:hover {
+            background-color: #CBD5E1 !important;
+        }
+        .light .border-slate-800,
+        .light .border-slate-800\/90,
+        .light .border-slate-800\/80,
+        .light .border-slate-700,
+        .light .border-slate-700\/80 {
+            border-color: #CBD5E1 !important;
+        }
+        .light .text-slate-100,
+        .light .text-slate-200 { color: #0F172A !important; }
+        .light .text-slate-300 { color: #334155 !important; }
+        .light .text-slate-400 { color: #475569 !important; }
+        .light .text-slate-500 { color: #64748B !important; }
+        .light .hover\:text-white:hover { color: #0F172A !important; }
+        .light .text-cyan-300,
+        .light .text-cyan-400 { color: #0284C7 !important; }
+        .light .text-purple-300,
+        .light .text-purple-400 { color: #7C3AED !important; }
+        .light .text-amber-300,
+        .light .text-amber-400 { color: #D97706 !important; }
+        .light .text-emerald-300,
+        .light .text-emerald-400 { color: #059669 !important; }
+        .light .text-rose-400 { color: #E11D48 !important; }
+        .light .canvas-node {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+            box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.12) !important;
+        }
+        .light .canvas-node:hover {
+            background-color: #F8FAFC !important;
+        }
+        .light .node-status-dot { border-color: #FFFFFF !important; }
+        .light .conn-label-bg { fill: #FFFFFF !important; }
+        .light .conn-label-text { fill: #0F172A !important; }
+        .light input,
+        .light select {
+            background-color: #FFFFFF !important;
+            color: #0F172A !important;
+            border-color: #CBD5E1 !important;
+        }
+        /* Keep CLI Terminal dark in Light Mode for readability */
+        .light #terminal-modal .terminal-window { background-color: #0D1117 !important; }
+        .light #terminal-modal .terminal-header { background-color: #161B22 !important; color: #E2E8F0 !important; }
+        .light #terminal-modal #terminal-screen { background-color: #050811 !important; color: #E2E8F0 !important; }
+        .light #terminal-modal .text-slate-100,
+        .light #terminal-modal .text-slate-200,
+        .light #terminal-modal .text-slate-300 { color: #E2E8F0 !important; }
+        .light #terminal-modal .text-slate-400,
+        .light #terminal-modal .text-slate-500 { color: #94A3B8 !important; }
+        .light #terminal-modal .text-cyan-300,
+        .light #terminal-modal .text-cyan-400 { color: #38BDF8 !important; }
+        .light #terminal-modal .text-amber-400 { color: #FBBF24 !important; }
+        .light #terminal-modal .text-emerald-300,
+        .light #terminal-modal .text-emerald-400 { color: #34D399 !important; }
+        .light #terminal-modal .text-rose-400 { color: #FB7185 !important; }
+        .light #terminal-modal #terminal-input { background-color: transparent !important; color: #F1F5F9 !important; border-color: transparent !important; }
+        .light #terminal-modal #terminal-source-select { background-color: #1E293B !important; color: #67E8F9 !important; border-color: #334155 !important; }
+
+        .pdu-packet {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            transition: left 0.42s linear, top 0.42s linear, transform 0.2s ease, opacity 0.25s ease;
+            pointer-events: none;
+            z-index: 35;
         }
         .drag-over { border: 2px dashed #38BDF8 !important; background-color: rgba(56, 189, 248, 0.03); }
         .canvas-panning { cursor: grabbing !important; }
@@ -233,6 +331,9 @@
                     <button onclick="setTool('connect')" id="tool-connect" title="Connect Cable" class="tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-plug"></i> <span class="hidden md:inline">Connect</span>
                     </button>
+                    <button onclick="setTool('pdu')" id="tool-pdu" title="Send Simple PDU (Test Connectivity)" class="tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-envelope"></i> <span class="hidden md:inline">PDU</span>
+                    </button>
                     <button onclick="toggleAssistantDrawer(true)" title="Smart Assistant" class="tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium text-purple-400 hover:bg-purple-500/10 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-robot"></i> <span class="hidden md:inline">AI Assistant</span>
                     </button>
@@ -263,6 +364,21 @@
                 </div>
             </div>
 
+            <!-- PDU Mode Banner -->
+            <div id="pdu-banner" class="bg-emerald-500/10 border-b border-emerald-500/30 px-4 py-2 flex items-center justify-between text-xs hidden z-10 shrink-0">
+                <div class="flex items-center space-x-2 text-emerald-400 font-medium">
+                    <i class="fa-solid fa-envelope animate-bounce"></i>
+                    <span id="pdu-banner-text">PDU Mode Active: Klik perangkat sumber (Source)...</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <select id="pdu-protocol-select" class="bg-slate-900 border border-slate-800 text-xs text-emerald-300 font-medium rounded px-2 py-1 focus:outline-none">
+                        <option value="ICMP">ICMP (Ping)</option>
+                        <option value="TCP">TCP (Port 80)</option>
+                    </select>
+                    <button onclick="cancelPduMode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded">Cancel (ESC)</button>
+                </div>
+            </div>
+
             <!-- Workspace Canvas Wrapper (supports Zoom & Pan) -->
             <div class="flex-1 relative overflow-hidden">
                 <div id="workspace-canvas" 
@@ -278,6 +394,7 @@
                         <div id="canvas-stage" class="workspace-grid absolute top-0 left-0 origin-top-left" style="width: 2400px; height: 1600px; transform: scale(1);">
                             <svg id="connection-svg" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></svg>
                             <div id="nodes-container" class="absolute inset-0 pointer-events-none"></div>
+                            <div id="pdu-layer" class="absolute inset-0 pointer-events-none z-30"></div>
                         </div>
                     </div>
                 </div>
@@ -306,6 +423,44 @@
                         <i class="fa-solid fa-expand"></i>
                         <span class="hidden sm:inline">Fit</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- PDU Simulation Event Panel -->
+            <div id="pdu-panel" class="bg-[#111827] border-t border-slate-800 z-10 shrink-0">
+                <div class="px-4 py-1.5 flex items-center justify-between border-b border-slate-800/80 text-xs">
+                    <button onclick="togglePduPanel()" class="flex items-center gap-2 font-bold text-slate-200 hover:text-cyan-400 transition">
+                        <i class="fa-solid fa-envelope-open-text text-emerald-400"></i>
+                        <span>PDU Simulation List</span>
+                        <span id="pdu-count-badge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono">0</span>
+                        <i id="pdu-panel-chevron" class="fa-solid fa-chevron-up text-[10px] text-slate-400 transition-transform"></i>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="setTool('pdu')" class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 font-medium transition">
+                            <i class="fa-solid fa-plus"></i> Send PDU
+                        </button>
+                        <button onclick="clearPduEvents()" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Clear</button>
+                    </div>
+                </div>
+                <div id="pdu-panel-body" class="hidden max-h-36 overflow-y-auto text-[11px]">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-900/90 text-slate-400 sticky top-0 text-[10px] uppercase">
+                            <tr>
+                                <th class="py-1.5 px-3">#</th>
+                                <th class="py-1.5 px-3">Status</th>
+                                <th class="py-1.5 px-3">Source</th>
+                                <th class="py-1.5 px-3">Destination</th>
+                                <th class="py-1.5 px-3">Type</th>
+                                <th class="py-1.5 px-3">Hops / Detail</th>
+                                <th class="py-1.5 px-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdu-table-body" class="divide-y divide-slate-800/70">
+                            <tr>
+                                <td colspan="7" class="py-3 text-center text-slate-500">Belum ada simulasi PDU. Klik tombol <strong>PDU</strong> lalu pilih perangkat sumber dan tujuan.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -570,12 +725,12 @@
     </div>
 
     <div id="terminal-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-[#0D1117] border border-cyan-500/40 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-pop">
-            <div class="bg-[#161B22] px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+        <div class="terminal-window bg-[#0D1117] border border-cyan-500/40 w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-pop">
+            <div class="terminal-header bg-[#161B22] px-4 py-3 border-b border-slate-800 flex items-center justify-between">
                 <span class="text-xs font-mono text-slate-300 font-bold"><i class="fa-solid fa-terminal text-cyan-400"></i> Network Command Terminal</span>
                 <button onclick="toggleTerminalModal(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="bg-slate-900/90 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs">
+            <div class="terminal-header bg-slate-900/90 px-4 py-2 border-b border-slate-800 flex items-center justify-between text-xs">
                 <span class="text-slate-400">Source PC: <select id="terminal-source-select" class="bg-slate-800 text-cyan-300 font-medium border border-slate-700 rounded px-2 py-0.5 focus:outline-none"></select></span>
             </div>
             <div id="terminal-screen" class="bg-[#050811] p-4 font-mono text-xs text-slate-200 h-80 overflow-y-auto space-y-1 select-text">
@@ -583,7 +738,7 @@
                 <div class="text-slate-500 mb-2">Type <span class="text-amber-400">help</span> for commands or ping an IP (e.g., <span class="text-cyan-300">ping 192.168.1.10</span>).</div>
                 <div id="terminal-log-container" class="space-y-1"></div>
             </div>
-            <div class="bg-[#161B22] p-3 border-t border-slate-800 flex items-center space-x-2">
+            <div class="terminal-header bg-[#161B22] p-3 border-t border-slate-800 flex items-center space-x-2">
                 <span class="font-mono text-xs text-cyan-400 font-bold">C:\Network&gt;</span>
                 <input type="text" id="terminal-input" onkeydown="handleTerminalKeydown(event)" placeholder="Type command here..." class="flex-1 bg-transparent border-none text-xs font-mono text-slate-100 focus:outline-none">
                 <button onclick="executeTerminalInput()" class="bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded text-xs font-medium transition">Send</button>
@@ -754,6 +909,11 @@
         
         let isConnectionMode = false;
         let connectionSourceId = null;
+        let isPduMode = false;
+        let pduSourceId = null;
+        let pduEvents = [];
+        let pduSequence = 0;
+        let pduPanelExpanded = false;
         let mouseX = 0;
         let mouseY = 0;
 
@@ -929,16 +1089,24 @@
         }
 
         function applyTheme(theme) {
+            const root = document.documentElement;
             const body = document.body;
             const themeIcon = document.getElementById('theme-icon');
+            const themeBtn = document.getElementById('theme-toggle');
             if (theme === 'light') {
+                root.classList.remove('dark');
+                root.classList.add('light');
                 body.classList.remove('dark', 'bg-[#0F172A]', 'text-slate-100');
-                body.classList.add('light', 'bg-slate-100', 'text-slate-800');
+                body.classList.add('light', 'bg-slate-100', 'text-slate-900');
                 if (themeIcon) themeIcon.className = "fa-solid fa-sun";
+                if (themeBtn) themeBtn.title = "Switch to Dark Mode";
             } else {
-                body.classList.remove('light', 'bg-slate-100', 'text-slate-800');
+                root.classList.remove('light');
+                root.classList.add('dark');
+                body.classList.remove('light', 'bg-slate-100', 'text-slate-900');
                 body.classList.add('dark', 'bg-[#0F172A]', 'text-slate-100');
                 if (themeIcon) themeIcon.className = "fa-solid fa-moon";
+                if (themeBtn) themeBtn.title = "Switch to Light Mode";
             }
         }
 
@@ -1540,7 +1708,7 @@
                     'onclick="handleNodeClick(event, \'' + safeId + '\')" ' +
                     'class="canvas-node absolute bg-slate-900/95 hover:bg-slate-800 border-2 ' + (isSelected ? 'border-cyan-400 node-selected' : 'border-slate-700') + ' p-3 rounded-2xl cursor-pointer shadow-xl transition-colors group w-32 flex flex-col items-center text-center z-10 pointer-events-auto" ' +
                     'style="left: ' + Number(dev.x) + 'px; top: ' + Number(dev.y) + 'px;">' +
-                    '<div class="absolute -top-2 -right-2 w-4 h-4 rounded-full ' + badge + ' border-2 border-slate-900"></div>' +
+                    '<div class="node-status-dot absolute -top-2 -right-2 w-4 h-4 rounded-full ' + badge + ' border-2 border-slate-900"></div>' +
                     '<div class="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xl mb-2"><i class="' + getDeviceIconClass(dev.type) + '"></i></div>' +
                     '<span class="text-xs font-bold text-slate-100 truncate w-full">' + safeName + '</span>' +
                     '<span class="text-[10px] text-cyan-400 font-mono mt-0.5 truncate w-full">' + safeIp + '</span>' +
@@ -1592,8 +1760,8 @@
                     svgHtml += '<g data-conn-id="' + safeConnId + '" class="cursor-pointer" onclick="handleConnectionClick(event, \'' + safeConnId + '\')">' +
                         '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="transparent" stroke-width="14" />' +
                         '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + stroke + '" stroke-width="' + (isSel ? 4 : 2.5) + '" stroke-dasharray="' + (conn.type === 'wireless' ? '5,5' : 'none') + '" />' +
-                        '<rect x="' + (midX - 24) + '" y="' + (midY - 9) + '" width="48" height="18" rx="4" fill="#111827" stroke="' + stroke + '" stroke-width="1" />' +
-                        '<text x="' + midX + '" y="' + (midY + 3) + '" fill="#E2E8F0" font-size="8" text-anchor="middle" font-weight="600">' + safeType + '</text>' +
+                        '<rect class="conn-label-bg" x="' + (midX - 24) + '" y="' + (midY - 9) + '" width="48" height="18" rx="4" fill="#111827" stroke="' + stroke + '" stroke-width="1" />' +
+                        '<text class="conn-label-text" x="' + midX + '" y="' + (midY + 3) + '" fill="#E2E8F0" font-size="8" text-anchor="middle" font-weight="600">' + safeType + '</text>' +
                     '</g>';
                 }
             });
@@ -1608,7 +1776,7 @@
         }
 
         function startDraggingNode(event, nodeId) {
-            if (isConnectionMode || activeTool === 'connect') return;
+            if (isConnectionMode || isPduMode || activeTool === 'connect' || activeTool === 'pdu') return;
             if (event.button !== 0) return;
             event.stopPropagation();
             activeDraggingNodeId = nodeId;
@@ -1661,15 +1829,33 @@
         function setTool(toolName) {
             activeTool = toolName;
             isConnectionMode = (toolName === 'connect');
-            const banner = document.getElementById('connection-banner');
-            if (banner) banner.style.display = isConnectionMode ? 'flex' : 'none';
+            isPduMode = (toolName === 'pdu');
+            if (!isConnectionMode) connectionSourceId = null;
+            if (!isPduMode) pduSourceId = null;
+
+            const connBanner = document.getElementById('connection-banner');
+            if (connBanner) connBanner.style.display = isConnectionMode ? 'flex' : 'none';
+
+            const pduBanner = document.getElementById('pdu-banner');
+            if (pduBanner) pduBanner.style.display = isPduMode ? 'flex' : 'none';
+            const pduBannerText = document.getElementById('pdu-banner-text');
+            if (pduBannerText && isPduMode) {
+                pduBannerText.innerText = 'PDU Mode Active: Klik perangkat sumber (Source)...';
+            }
+
             const selBtn = document.getElementById('tool-select');
             const connBtn = document.getElementById('tool-connect');
-            if (selBtn && connBtn) {
-                selBtn.className = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 " + (!isConnectionMode ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30" : "text-slate-400 hover:text-white hover:bg-slate-800");
-                connBtn.className = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 " + (isConnectionMode ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30" : "text-slate-400 hover:text-white hover:bg-slate-800");
-            }
+            const pduBtn = document.getElementById('tool-pdu');
+            const activeCls = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 bg-cyan-500/20 text-cyan-400 border border-cyan-500/30";
+            const pduActiveCls = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+            const idleCls = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800";
+
+            if (selBtn) selBtn.className = (toolName === 'select') ? activeCls : idleCls;
+            if (connBtn) connBtn.className = (toolName === 'connect') ? activeCls : idleCls;
+            if (pduBtn) pduBtn.className = (toolName === 'pdu') ? pduActiveCls : idleCls;
+
             if (isConnectionMode) showNotification("Connection Mode Active");
+            if (isPduMode) showNotification("PDU Mode Active: Pilih Source & Destination");
         }
 
         function cancelConnectionMode() {
@@ -1677,11 +1863,39 @@
             connectionSourceId = null;
             const banner = document.getElementById('connection-banner');
             if (banner) banner.style.display = 'none';
-            setTool('select');
+            if (activeTool === 'connect') setTool('select');
+        }
+
+        function cancelPduMode() {
+            isPduMode = false;
+            pduSourceId = null;
+            const banner = document.getElementById('pdu-banner');
+            if (banner) banner.style.display = 'none';
+            if (activeTool === 'pdu') setTool('select');
         }
 
         function handleNodeClick(event, nodeId) {
             event.stopPropagation();
+            if (isPduMode) {
+                const clickedDev = devices.find(function(d) { return d.id === nodeId; });
+                if (!pduSourceId) {
+                    pduSourceId = nodeId;
+                    const name = clickedDev ? clickedDev.name : nodeId;
+                    const ip = (clickedDev && clickedDev.network && clickedDev.network.ipAddress) ? clickedDev.network.ipAddress : 'No IP';
+                    const pduText = document.getElementById('pdu-banner-text');
+                    if (pduText) pduText.innerText = 'Source: ' + name + ' (' + ip + ') — Klik perangkat tujuan (Destination)...';
+                    showNotification("PDU Source: " + name + ". Pilih tujuan...");
+                } else {
+                    const protoSelect = document.getElementById('pdu-protocol-select');
+                    const protocol = protoSelect ? protoSelect.value : 'ICMP';
+                    const srcId = pduSourceId;
+                    pduSourceId = null;
+                    const pduText = document.getElementById('pdu-banner-text');
+                    if (pduText) pduText.innerText = 'PDU Mode Active: Klik perangkat sumber (Source)...';
+                    sendPduSimulation(srcId, nodeId, protocol);
+                }
+                return;
+            }
             if (isConnectionMode) {
                 if (!connectionSourceId) {
                     connectionSourceId = nodeId;
@@ -2321,6 +2535,286 @@
             };
         }
 
+        function evaluatePduConnectivity(srcId, tgtId) {
+            const srcDev = devices.find(function(d) { return d.id === srcId; });
+            const tgtDev = devices.find(function(d) { return d.id === tgtId; });
+            if (!srcDev || !tgtDev) {
+                return { ok: false, path: [], reason: "Source or destination device not found.", viaSwitch: false };
+            }
+
+            const srcIps = getDeviceAllIPs(srcDev);
+            const tgtIps = getDeviceAllIPs(tgtDev);
+            if (srcIps.length === 0) {
+                return { ok: false, path: [srcId], reason: srcDev.name + " belum memiliki IP address valid.", viaSwitch: false };
+            }
+            if (tgtIps.length === 0) {
+                return { ok: false, path: [srcId], reason: tgtDev.name + " belum memiliki IP address valid.", viaSwitch: false };
+            }
+
+            const conflicts = detectIPConflicts();
+            if (conflicts[srcIps[0]] && conflicts[srcIps[0]].length > 1) {
+                return { ok: false, path: [srcId], reason: "IP Conflict pada source (" + srcIps[0] + ").", viaSwitch: false };
+            }
+            if (conflicts[tgtIps[0]] && conflicts[tgtIps[0]].length > 1) {
+                return { ok: false, path: [srcId], reason: "IP Conflict pada destination (" + tgtIps[0] + ").", viaSwitch: false };
+            }
+
+            if (srcId === tgtId) {
+                return { ok: true, path: [srcId], reason: "Loopback OK (" + srcIps[0] + ")", viaSwitch: false, routedVia: null };
+            }
+
+            const path = findPathBetweenDevices(srcId, tgtId);
+            if (!path) {
+                return { ok: false, path: [srcId], reason: "Tidak ada koneksi kabel fisik antara " + srcDev.name + " dan " + tgtDev.name + ".", viaSwitch: false };
+            }
+
+            const srcSubnet = (srcDev.network && srcDev.network.subnetMask) ? srcDev.network.subnetMask : '255.255.255.0';
+            const tgtSubnet = (tgtDev.network && tgtDev.network.subnetMask) ? tgtDev.network.subnetMask : '255.255.255.0';
+            const srcNet = getNetworkAddress(srcIps[0], srcSubnet);
+            const tgtNet = getNetworkAddress(tgtIps[0], tgtSubnet);
+
+            let routedVia = null;
+            if (srcNet !== tgtNet) {
+                const routeCheck = verifyLayer3Route(srcDev, tgtDev, srcNet, srcSubnet, tgtNet, tgtSubnet);
+                if (!routeCheck.ok) {
+                    const routersOnPath = path.filter(function(id) {
+                        const node = devices.find(function(d) { return d.id === id; });
+                        return node && node.type === 'Router';
+                    });
+                    const failIdx = routersOnPath.length > 0 ? path.indexOf(routersOnPath[0]) : 0;
+                    return {
+                        ok: false,
+                        path: path.slice(0, Math.max(1, failIdx + 1)),
+                        reason: routeCheck.reason,
+                        viaSwitch: false
+                    };
+                }
+                routedVia = routeCheck.via;
+            }
+
+            const viaSwitch = path.some(function(id) {
+                const node = devices.find(function(d) { return d.id === id; });
+                return node && node.type === 'Switch';
+            });
+
+            return {
+                ok: true,
+                path: path,
+                viaSwitch: viaSwitch,
+                routedVia: routedVia,
+                reason: routedVia
+                    ? ("Delivered via " + routedVia + " (" + (path.length - 1) + " hops)")
+                    : ("Delivered (" + (path.length - 1) + " hops)")
+            };
+        }
+
+        function sendPduSimulation(srcId, tgtId, protocol, existingEventId) {
+            const srcDev = devices.find(function(d) { return d.id === srcId; });
+            const tgtDev = devices.find(function(d) { return d.id === tgtId; });
+            if (!srcDev || !tgtDev) return;
+
+            const result = evaluatePduConnectivity(srcId, tgtId);
+            const hopNames = (result.path || []).map(function(id) {
+                const d = devices.find(function(dev) { return dev.id === id; });
+                return d ? d.name : id;
+            }).join(' → ');
+
+            let evt;
+            if (existingEventId) {
+                evt = pduEvents.find(function(e) { return e.id === existingEventId; });
+            }
+            if (!evt) {
+                pduSequence++;
+                evt = {
+                    id: 'pdu-' + Date.now() + '-' + pduSequence,
+                    seq: pduSequence,
+                    srcId: srcId,
+                    tgtId: tgtId,
+                    srcName: srcDev.name,
+                    tgtName: tgtDev.name,
+                    protocol: protocol || 'ICMP',
+                    status: 'In Progress',
+                    hops: hopNames || srcDev.name,
+                    reason: 'Sending packet...'
+                };
+                pduEvents.unshift(evt);
+                if (pduEvents.length > 30) pduEvents.pop();
+            } else {
+                evt.srcName = srcDev.name;
+                evt.tgtName = tgtDev.name;
+                evt.status = 'In Progress';
+                evt.hops = hopNames || srcDev.name;
+                evt.reason = 'Replaying packet...';
+            }
+
+            if (!pduPanelExpanded) togglePduPanel(true);
+            else renderPduTable();
+
+            animatePduSequence(evt, result);
+        }
+
+        function animatePduSequence(evt, result) {
+            const layer = document.getElementById('pdu-layer');
+            if (!layer) return;
+
+            const pathIds = (result.path && result.path.length > 0) ? result.path : [evt.srcId];
+            const firstDev = devices.find(function(d) { return d.id === pathIds[0]; });
+            if (!firstDev) return;
+
+            const pkt = document.createElement('div');
+            pkt.className = 'pdu-packet flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-500 text-white text-[10px] font-bold shadow-lg border border-white/60';
+            pkt.style.left = (firstDev.x + 64) + 'px';
+            pkt.style.top = (firstDev.y + 60) + 'px';
+            pkt.innerHTML = '<i class="fa-solid fa-envelope"></i> <span>' + escapeHTML(evt.protocol) + '</span>';
+            layer.appendChild(pkt);
+
+            const stepMs = 450;
+            let idx = 1;
+
+            function moveToNode(nodeId) {
+                const d = devices.find(function(dev) { return dev.id === nodeId; });
+                if (!d) return;
+                pkt.style.left = (d.x + 64) + 'px';
+                pkt.style.top = (d.y + 60) + 'px';
+            }
+
+            function finishFailure() {
+                pkt.className = 'pdu-packet flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-600 text-white text-[10px] font-bold shadow-lg border border-white/60 animate-bounce';
+                pkt.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> <span>Failed</span>';
+                evt.status = 'Failed';
+                evt.reason = result.reason;
+                renderPduTable();
+                showNotification("PDU Failed: " + result.reason);
+                setTimeout(function() {
+                    pkt.style.opacity = '0';
+                    setTimeout(function() { if (pkt.parentNode) pkt.remove(); }, 300);
+                }, 1100);
+            }
+
+            function runBackward(backPath, backIdx) {
+                if (backIdx >= backPath.length) {
+                    pkt.className = 'pdu-packet flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500 text-white text-[10px] font-bold shadow-lg border border-white/60';
+                    pkt.innerHTML = '<i class="fa-solid fa-circle-check"></i> <span>OK</span>';
+                    evt.status = 'Successful';
+                    evt.reason = result.reason;
+                    if (evt.srcId !== evt.tgtId) {
+                        lastSuccessfulPing = {
+                            srcId: evt.srcId,
+                            tgtId: evt.tgtId,
+                            viaSwitch: result.viaSwitch,
+                            routedVia: result.routedVia,
+                            timestamp: Date.now()
+                        };
+                    }
+                    renderPduTable();
+                    showNotification("PDU Successful: " + evt.srcName + " ↔ " + evt.tgtName);
+                    setTimeout(function() {
+                        pkt.style.opacity = '0';
+                        setTimeout(function() { if (pkt.parentNode) pkt.remove(); }, 300);
+                    }, 900);
+                    return;
+                }
+                moveToNode(backPath[backIdx]);
+                setTimeout(function() {
+                    runBackward(backPath, backIdx + 1);
+                }, stepMs);
+            }
+
+            function runForward() {
+                if (idx >= pathIds.length) {
+                    if (!result.ok) {
+                        finishFailure();
+                        return;
+                    }
+                    // Arrived at target: switch color to reply (emerald) and return
+                    pkt.className = 'pdu-packet flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500 text-white text-[10px] font-bold shadow-lg border border-white/60';
+                    pkt.innerHTML = '<i class="fa-solid fa-reply"></i> <span>Reply</span>';
+                    const backPath = pathIds.slice().reverse();
+                    if (backPath.length <= 1) {
+                        setTimeout(function() { runBackward(backPath, 1); }, 350);
+                    } else {
+                        setTimeout(function() { runBackward(backPath, 1); }, 300);
+                    }
+                    return;
+                }
+                moveToNode(pathIds[idx]);
+                idx++;
+                setTimeout(runForward, stepMs);
+            }
+
+            if (pathIds.length <= 1) {
+                setTimeout(function() {
+                    if (result.ok) {
+                        runForward();
+                    } else {
+                        finishFailure();
+                    }
+                }, 250);
+            } else {
+                requestAnimationFrame(function() {
+                    requestAnimationFrame(runForward);
+                });
+            }
+        }
+
+        function togglePduPanel(forceState) {
+            pduPanelExpanded = (typeof forceState === 'boolean') ? forceState : !pduPanelExpanded;
+            const body = document.getElementById('pdu-panel-body');
+            const chevron = document.getElementById('pdu-panel-chevron');
+            if (body) body.classList.toggle('hidden', !pduPanelExpanded);
+            if (chevron) chevron.style.transform = pduPanelExpanded ? 'rotate(180deg)' : 'rotate(0deg)';
+            if (pduPanelExpanded) renderPduTable();
+        }
+
+        function clearPduEvents() {
+            pduEvents = [];
+            pduSequence = 0;
+            const layer = document.getElementById('pdu-layer');
+            if (layer) layer.innerHTML = '';
+            renderPduTable();
+        }
+
+        function replayPduEvent(eventId) {
+            const evt = pduEvents.find(function(e) { return e.id === eventId; });
+            if (!evt) return;
+            sendPduSimulation(evt.srcId, evt.tgtId, evt.protocol, evt.id);
+        }
+
+        function renderPduTable() {
+            const tbody = document.getElementById('pdu-table-body');
+            const badge = document.getElementById('pdu-count-badge');
+            if (badge) badge.innerText = pduEvents.length;
+            if (!tbody) return;
+
+            if (pduEvents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="py-3 text-center text-slate-500">Belum ada simulasi PDU. Klik tombol <strong>PDU</strong> lalu pilih perangkat sumber dan tujuan.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            pduEvents.forEach(function(evt) {
+                let statusBadge = '<span class="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-semibold">In Progress</span>';
+                if (evt.status === 'Successful') {
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">Successful</span>';
+                } else if (evt.status === 'Failed') {
+                    statusBadge = '<span class="px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold">Failed</span>';
+                }
+
+                html += '<tr class="hover:bg-slate-800/40">' +
+                    '<td class="py-1.5 px-3 font-mono text-slate-400">' + evt.seq + '</td>' +
+                    '<td class="py-1.5 px-3">' + statusBadge + '</td>' +
+                    '<td class="py-1.5 px-3 font-medium text-slate-200">' + escapeHTML(evt.srcName) + '</td>' +
+                    '<td class="py-1.5 px-3 font-medium text-slate-200">' + escapeHTML(evt.tgtName) + '</td>' +
+                    '<td class="py-1.5 px-3 font-mono text-cyan-400">' + escapeHTML(evt.protocol) + '</td>' +
+                    '<td class="py-1.5 px-3 text-slate-400 max-w-[260px] truncate" title="' + escapeHTML(evt.hops + ' — ' + evt.reason) + '">' + escapeHTML(evt.reason) + '</td>' +
+                    '<td class="py-1.5 px-3 text-right">' +
+                        '<button onclick="replayPduEvent(\'' + escapeHTML(evt.id) + '\')" title="Replay PDU" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 text-[10px] font-medium transition"><i class="fa-solid fa-play"></i> Replay</button>' +
+                    '</td>' +
+                '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
         function runPingSimulation(targetIP) {
             const srcSelect = document.getElementById('terminal-source-select');
             const srcId = srcSelect ? srcSelect.value : null;
@@ -2812,6 +3306,8 @@
             selectedConnectionId = null;
             lastSuccessfulPing = null;
             cancelConnectionMode();
+            cancelPduMode();
+            clearPduEvents();
             showEmptyConfigState();
             syncDeviceCounters();
             applyCanvasZoom(typeof page.zoom === 'number' ? page.zoom : 1, false);
@@ -3059,6 +3555,7 @@
                 selectedDeviceId = null;
                 selectedConnectionId = null;
                 lastSuccessfulPing = null;
+                clearPduEvents();
                 showEmptyConfigState();
                 renderWorkspace();
                 closeModal();
@@ -3146,6 +3643,7 @@
             const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
             if (e.key === 'Escape') {
                 cancelConnectionMode();
+                cancelPduMode();
                 closeModal();
                 toggleTopologyModal(false);
                 toggleTerminalModal(false);
