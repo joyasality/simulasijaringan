@@ -43,6 +43,7 @@
                 linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
         }
         .drag-over { border: 2px dashed #38BDF8 !important; background-color: rgba(56, 189, 248, 0.03); }
+        .canvas-panning { cursor: grabbing !important; }
         .node-selected { border-color: #38BDF8 !important; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3), 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important; }
         .connection-selected { stroke: #8B5CF6 !important; stroke-width: 4px !important; }
         .problem-highlight { border-color: #EF4444 !important; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.4), 0 0 15px rgba(239, 68, 68, 0.6) !important; animation: pulseGlowRed 1.5s infinite; }
@@ -100,11 +101,16 @@
             <button onclick="toggleTerminalModal(true)" title="Terminal" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-xs border border-slate-700">
                 <i class="fa-solid fa-terminal"></i>
             </button>
-            <button onclick="confirmResetSimulation()" title="Reset Simulator" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-xs border border-slate-700">
+            <button onclick="confirmResetSimulation()" title="Reset Active Page" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-xs border border-slate-700">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
-            <button onclick="saveProject()" title="Save Project" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition text-xs border border-slate-700">
+            <button onclick="saveProject()" title="Save Project (LocalStorage)" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 transition text-xs border border-slate-700 flex items-center gap-1.5">
                 <i class="fa-solid fa-floppy-disk"></i>
+                <span class="hidden xl:inline">Save</span>
+            </button>
+            <button onclick="toggleProjectIOModal(true)" title="Export / Import Project" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-400 transition text-xs border border-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-file-export"></i>
+                <span class="hidden xl:inline">Export/Import</span>
             </button>
             <button onclick="toggleDarkMode()" id="theme-toggle" title="Toggle Dark/Light Mode" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 transition text-xs border border-slate-700">
                 <i class="fa-solid fa-moon" id="theme-icon"></i>
@@ -178,7 +184,7 @@
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col bg-[#0F172A] workspace-grid relative overflow-hidden">
+        <main class="flex-1 flex flex-col bg-[#0F172A] relative overflow-hidden">
             
             <!-- Active Challenge Banner -->
             <div id="active-challenge-banner" class="bg-amber-500/10 border-b border-amber-500/30 px-4 py-2 flex items-center justify-between text-xs z-20 hidden shrink-0">
@@ -192,6 +198,19 @@
                     <button onclick="checkChallengeAnswer()" class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-3 py-1 rounded shadow transition">Check Answer</button>
                     <button onclick="getChallengeHint()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 px-2.5 py-1 rounded">Hint (<span id="hint-count-badge">3</span>)</button>
                     <button onclick="quitActiveChallenge()" class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded">Quit</button>
+                </div>
+            </div>
+
+            <!-- Simulation Pages Tab Bar -->
+            <div class="bg-[#0B1120] border-b border-slate-800/90 px-3 py-1.5 flex items-center justify-between gap-2 z-20 shrink-0">
+                <div id="simulation-pages-tabs" class="flex items-center gap-1.5 overflow-x-auto flex-1 py-0.5"></div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="createNewSimulationPage()" title="Add New Simulation Page" class="px-2.5 py-1 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> New Page
+                    </button>
+                    <button onclick="duplicateCurrentPage()" title="Duplicate Current Page" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] transition">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
                 </div>
             </div>
 
@@ -244,17 +263,26 @@
                 </div>
             </div>
 
-            <!-- Workspace Canvas -->
-            <div id="workspace-canvas" 
-                 ondragover="handleWorkspaceDragOver(event)" 
-                 ondragleave="handleWorkspaceDragLeave(event)" 
-                 ondrop="handleWorkspaceDrop(event)"
-                 onmousemove="handleWorkspaceMouseMove(event)"
-                 class="flex-1 relative overflow-auto p-8 flex items-center justify-center">
-                
-                <svg id="connection-svg" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></svg>
+            <!-- Workspace Canvas Wrapper (supports Zoom & Pan) -->
+            <div class="flex-1 relative overflow-hidden">
+                <div id="workspace-canvas" 
+                     ondragover="handleWorkspaceDragOver(event)" 
+                     ondragleave="handleWorkspaceDragLeave(event)" 
+                     ondrop="handleWorkspaceDrop(event)"
+                     onmousemove="handleWorkspaceMouseMove(event)"
+                     onmousedown="startCanvasPan(event)"
+                     onwheel="handleWorkspaceWheel(event)"
+                     class="w-full h-full relative overflow-auto">
+                    
+                    <div id="canvas-zoom-sizer" class="relative" style="width: 2400px; height: 1600px;">
+                        <div id="canvas-stage" class="workspace-grid absolute top-0 left-0 origin-top-left" style="width: 2400px; height: 1600px; transform: scale(1);">
+                            <svg id="connection-svg" class="absolute inset-0 w-full h-full pointer-events-auto z-0"></svg>
+                            <div id="nodes-container" class="absolute inset-0 pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
 
-                <div id="workspace-empty-hint" class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                <div id="workspace-empty-hint" class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-10">
                     <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl mb-3 border border-cyan-500/20 shadow-xl shadow-cyan-500/10 animate-bounce">
                         <i class="fa-solid fa-globe"></i>
                     </div>
@@ -262,7 +290,23 @@
                     <p class="text-xs text-slate-400 max-w-xs">Drag devices from sidebar, use <button onclick="toggleTopologyModal(true)" class="text-cyan-400 underline font-semibold pointer-events-auto">Topology Gen</button>, or launch <button onclick="toggleAssistantDrawer(true)" class="text-purple-400 underline font-semibold pointer-events-auto">AI Assistant</button>.</p>
                 </div>
 
-                <div id="nodes-container" class="absolute inset-0 pointer-events-none"></div>
+                <!-- Floating Zoom Controls -->
+                <div class="absolute bottom-4 right-4 z-20 flex items-center gap-1 bg-[#111827]/95 backdrop-blur-md border border-slate-700/80 p-1 rounded-xl shadow-2xl">
+                    <button onclick="zoomWorkspace(-0.15)" title="Zoom Out (-)" class="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-cyan-400 flex items-center justify-center text-xs transition">
+                        <i class="fa-solid fa-magnifying-glass-minus"></i>
+                    </button>
+                    <button onclick="resetWorkspaceZoom()" id="zoom-level-badge" title="Reset Zoom (100%)" class="px-2 h-7 rounded-lg hover:bg-slate-800 text-xs font-mono font-bold text-cyan-300 transition min-w-[52px]">
+                        100%
+                    </button>
+                    <button onclick="zoomWorkspace(0.15)" title="Zoom In (+)" class="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-cyan-400 flex items-center justify-center text-xs transition">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </button>
+                    <div class="h-4 w-[1px] bg-slate-700 mx-0.5"></div>
+                    <button onclick="fitWorkspaceToScreen()" title="Fit Topology to Screen" class="px-2 h-7 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-cyan-400 flex items-center gap-1 text-[11px] font-medium transition">
+                        <i class="fa-solid fa-expand"></i>
+                        <span class="hidden sm:inline">Fit</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Status Bar -->
@@ -331,6 +375,11 @@
                         <div>
                             <label class="block text-[11px] font-medium text-slate-400 mb-1">Gateway</label>
                             <input type="text" id="input-gateway" placeholder="e.g. 192.168.1.1" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <div id="router-interfaces-group" class="hidden">
+                            <label class="block text-[11px] font-medium text-amber-400 mb-1">Router Interfaces (Multi-Subnet)</label>
+                            <input type="text" id="input-router-interfaces" placeholder="e.g. 192.168.2.1, 10.0.0.1" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-500">
+                            <p class="text-[10px] text-slate-500 mt-1">Pisahkan dengan koma untuk IP gateway subnet lain pada Router ini.</p>
                         </div>
                     </div>
 
@@ -542,6 +591,112 @@
         </div>
     </div>
 
+    <!-- Dashboard Modal -->
+    <div id="dashboard-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#111827] border border-cyan-500/40 w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh] animate-pop">
+            <div class="bg-[#161B22] px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-lg"><i class="fa-solid fa-house"></i></div>
+                    <div>
+                        <h3 class="font-bold text-slate-100 text-sm">Simulation Dashboard</h3>
+                        <p class="text-[11px] text-slate-400">Ringkasan workspace, daftar halaman simulasi, dan aksi cepat</p>
+                    </div>
+                </div>
+                <button onclick="toggleDashboardModal(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Total Pages</span>
+                        <div id="dash-pages-count" class="text-xl font-bold text-cyan-400 mt-1">1</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Active Devices</span>
+                        <div id="dash-devices-count" class="text-xl font-bold text-slate-100 mt-1">0</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Health Score</span>
+                        <div id="dash-health-score" class="text-xl font-bold text-emerald-400 mt-1">100%</div>
+                    </div>
+                    <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Learning Progress</span>
+                        <div id="dash-learning-progress" class="text-xl font-bold text-amber-400 mt-1">0 / 5</div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Simulation Pages</h4>
+                        <div class="flex items-center gap-2">
+                            <button onclick="createNewSimulationPage(); renderDashboardContent();" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/30 text-xs font-medium transition">
+                                <i class="fa-solid fa-plus"></i> New Page
+                            </button>
+                            <button onclick="toggleDashboardModal(false); toggleProjectIOModal(true);" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition">
+                                <i class="fa-solid fa-file-export"></i> Export / Import
+                            </button>
+                        </div>
+                    </div>
+                    <div id="dash-pages-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export / Import & Save Project Modal -->
+    <div id="project-io-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#111827] border border-cyan-500/40 w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-pop">
+            <div class="bg-[#161B22] px-5 py-4 border-b border-slate-800 flex items-center justify-between">
+                <h3 class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-cyan-400"></i> Save, Export & Import Project
+                </h3>
+                <button onclick="toggleProjectIOModal(false)" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-5 text-xs">
+                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-floppy-disk text-emerald-400"></i> Simpan ke Browser (LocalStorage)</span>
+                        <span id="last-saved-label" class="text-[10px] text-slate-400">Auto-saved</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Menyimpan seluruh halaman simulasi secara lokal di browser Anda.</p>
+                    <button onclick="saveProject()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Semua Halaman Sekarang
+                    </button>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2.5">
+                    <span class="font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-download text-cyan-400"></i> Export ke File JSON</span>
+                    <p class="text-[11px] text-slate-400">Unduh konfigurasi topologi, IP, dan koneksi untuk dibagikan atau dicadangkan.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportProjectJSON('page')" class="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 font-medium py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-file-code"></i> Halaman Aktif
+                        </button>
+                        <button onclick="exportProjectJSON('all')" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-boxes-stacked"></i> Semua Halaman
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-xl space-y-2.5">
+                    <span class="font-bold text-slate-200 flex items-center gap-2"><i class="fa-solid fa-upload text-purple-400"></i> Import dari File JSON</span>
+                    <p class="text-[11px] text-slate-400">Pilih mode impor lalu unggah file <code class="text-cyan-300">.json</code> hasil export sebelumnya.</p>
+                    <div class="flex items-center gap-4 text-[11px] text-slate-300">
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="radio" name="import-mode" value="append" checked class="accent-cyan-500"> Tambah sebagai Halaman Baru
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="radio" name="import-mode" value="replace" class="accent-rose-500"> Ganti Workspace Saat Ini
+                        </label>
+                    </div>
+                    <input type="file" id="import-project-file" accept=".json,application/json" onchange="handleImportFileSelected(event)" class="hidden">
+                    <button onclick="triggerImportFilePicker()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-2 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-import"></i> Pilih File JSON untuk Diimpor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
         <div class="bg-[#111827] border border-slate-800 w-full max-w-sm p-5 rounded-2xl shadow-2xl space-y-4 animate-pop">
@@ -570,9 +725,28 @@
             }
         }
 
+        function escapeHTML(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        const STORAGE_KEY_PROJECT = 'ns_project';
+        const CANVAS_VIRTUAL_WIDTH = 2400;
+        const CANVAS_VIRTUAL_HEIGHT = 1600;
+        const MIN_ZOOM = 0.35;
+        const MAX_ZOOM = 2.0;
+
         let currentTheme = localStorage.getItem('ns_theme') || 'dark';
         let activeTool = 'select';
         
+        let simulationPages = [];
+        let activePageId = null;
+
         let devices = [];
         let connections = [];
         let selectedDeviceId = null;
@@ -583,10 +757,21 @@
         let mouseX = 0;
         let mouseY = 0;
 
+        let canvasZoom = 1;
+        let isPanningCanvas = false;
+        let panStartX = 0;
+        let panStartY = 0;
+        let panStartScrollLeft = 0;
+        let panStartScrollTop = 0;
+
         let deviceCounters = { pc: 0, laptop: 0, server: 0, smartphone: 0, router: 0, switch: 0, hub: 0, accesspoint: 0 };
         let activeDraggingNodeId = null;
-        let dragOffsetX = 0;
-        let dragOffsetY = 0;
+        let dragStartMouseX = 0;
+        let dragStartMouseY = 0;
+        let dragStartNodeX = 0;
+        let dragStartNodeY = 0;
+
+        let lastSuccessfulPing = null;
 
         let topologyState = {
             current: 'CUSTOM',
@@ -686,9 +871,55 @@
             if (activeBtn) {
                 activeBtn.className = "nav-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-sm transition flex items-center gap-1.5";
             }
-            if (tabId === 'challenge' || tabId === 'learning') {
+            if (tabId === 'dashboard') {
+                toggleLearningDashboard(false);
+                toggleDashboardModal(true);
+            } else if (tabId === 'simulator') {
+                toggleDashboardModal(false);
+                toggleLearningDashboard(false);
+            } else if (tabId === 'challenge' || tabId === 'learning') {
+                toggleDashboardModal(false);
                 toggleLearningDashboard(true);
             }
+        }
+
+        function toggleDashboardModal(show) {
+            const modal = document.getElementById('dashboard-modal');
+            if (modal) modal.classList.toggle('hidden', !show);
+            if (show) renderDashboardContent();
+        }
+
+        function renderDashboardContent() {
+            syncCurrentPageState();
+            const pagesCountEl = document.getElementById('dash-pages-count');
+            if (pagesCountEl) pagesCountEl.innerText = simulationPages.length;
+            const devCountEl = document.getElementById('dash-devices-count');
+            if (devCountEl) devCountEl.innerText = devices.length;
+            const healthEl = document.getElementById('dash-health-score');
+            if (healthEl) healthEl.innerText = diagnosticState.healthScore + '%';
+            const learnEl = document.getElementById('dash-learning-progress');
+            if (learnEl) learnEl.innerText = playerData.completedChallenges.length + ' / ' + challengesList.length;
+
+            const listEl = document.getElementById('dash-pages-list');
+            if (!listEl) return;
+            let html = '';
+            simulationPages.forEach(function(page) {
+                const isActive = page.id === activePageId;
+                html += '<div class="bg-slate-900/90 border ' + (isActive ? 'border-cyan-500/60 bg-cyan-500/5' : 'border-slate-800') + ' p-4 rounded-xl flex items-center justify-between gap-3">' +
+                    '<div class="min-w-0">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<span class="font-bold text-slate-100 text-xs truncate">' + escapeHTML(page.name) + '</span>' +
+                            (isActive ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-semibold">ACTIVE</span>' : '') +
+                        '</div>' +
+                        '<p class="text-[11px] text-slate-400 mt-1">' + page.devices.length + ' devices · ' + page.connections.length + ' links · Zoom ' + Math.round((page.zoom || 1) * 100) + '%</p>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1.5 shrink-0">' +
+                        (!isActive ? '<button onclick="switchSimulationPage(\'' + escapeHTML(page.id) + '\'); toggleDashboardModal(false); switchNav(\'simulator\');" class="px-2.5 py-1 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-[11px] font-medium transition">Open</button>' : '<button onclick="toggleDashboardModal(false); switchNav(\'simulator\');" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-medium transition">Resume</button>') +
+                        '<button onclick="renameSimulationPage(\'' + escapeHTML(page.id) + '\'); renderDashboardContent();" title="Rename Page" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] transition"><i class="fa-solid fa-pen"></i></button>' +
+                    '</div>' +
+                '</div>';
+            });
+            listEl.innerHTML = html;
         }
 
         function toggleDarkMode() {
@@ -723,8 +954,7 @@
         }
 
         function updatePlayerHeaderUI() {
-            const requiredXP = playerData.level * 500;
-            if (playerData.xp >= requiredXP) {
+            while (playerData.xp >= playerData.level * 500) {
                 playerData.level++;
                 showNotification("🎉 LEVEL UP! You reached Level " + playerData.level + "!");
             }
@@ -801,7 +1031,9 @@
             activeChallenge = ch;
             challengeSecondsElapsed = 0;
             challengeHintsUsed = 0;
+            lastSuccessfulPing = null;
             toggleLearningDashboard(false);
+            toggleDashboardModal(false);
 
             const banner = document.getElementById('active-challenge-banner');
             if (banner) banner.classList.remove('hidden');
@@ -875,6 +1107,13 @@
                 }
             }
 
+            if (passed && req.minDevices) {
+                if (devices.length < req.minDevices) {
+                    passed = false;
+                    failReason = "Need at least " + req.minDevices + " device(s). Current: " + devices.length + ".";
+                }
+            }
+
             if (passed && req.topology) {
                 const detected = detectTopologyAutomatically();
                 if (!detected || detected.detected !== req.topology) {
@@ -884,12 +1123,32 @@
             }
 
             if (passed && req.ipConfigured) {
+                const conflicts = detectIPConflicts();
                 const configuredCount = devices.filter(function(d) {
-                    return d.network && d.network.ipAddress && validateIPAddress(d.network.ipAddress);
+                    if (!d.network || !d.network.ipAddress || !validateIPAddress(d.network.ipAddress)) return false;
+                    if (conflicts[d.network.ipAddress] && conflicts[d.network.ipAddress].length > 1) return false;
+                    if (req.subnet && d.network.subnetMask !== req.subnet) return false;
+                    return true;
                 }).length;
                 if (configuredCount < req.ipConfigured) {
                     passed = false;
-                    failReason = "Need at least " + req.ipConfigured + " configured device(s) with valid IP.";
+                    failReason = req.subnet
+                        ? ("Need at least " + req.ipConfigured + " device(s) with unique valid IP and subnet mask " + req.subnet + ".")
+                        : ("Need at least " + req.ipConfigured + " configured device(s) with unique valid IP.");
+                }
+            }
+
+            if (passed && req.pingSuccess) {
+                const switchCount = devices.filter(function(d) { return d.type === 'Switch'; }).length;
+                if (switchCount < 1) {
+                    passed = false;
+                    failReason = "Add at least 1 Switch and connect two configured PCs through it.";
+                } else if (!lastSuccessfulPing || !lastSuccessfulPing.viaSwitch) {
+                    passed = false;
+                    failReason = "Perform a successful ping between two different PCs connected through a Switch in the Terminal first.";
+                } else if (!checkDeviceConnectivity(lastSuccessfulPing.srcId, lastSuccessfulPing.tgtId)) {
+                    passed = false;
+                    failReason = "The previously pinged devices are no longer connected. Re-connect and ping again in Terminal.";
                 }
             }
 
@@ -986,6 +1245,14 @@
                     if (!map[ip]) map[ip] = [];
                     map[ip].push(d);
                 }
+                if (d.type === 'Router' && d.network && Array.isArray(d.network.interfaces)) {
+                    d.network.interfaces.forEach(function(ifIp) {
+                        if (validateIPAddress(ifIp) && ifIp !== d.network.ipAddress) {
+                            if (!map[ifIp]) map[ifIp] = [];
+                            map[ifIp].push(d);
+                        }
+                    });
+                }
             });
             return map;
         }
@@ -995,6 +1262,152 @@
             document.querySelectorAll('.device-card').forEach(function(card) {
                 card.style.display = card.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
             });
+        }
+
+        function getCanvasLogicalCoords(clientX, clientY) {
+            const stage = document.getElementById('canvas-stage');
+            if (!stage) return { x: 100, y: 100 };
+            const rect = stage.getBoundingClientRect();
+            return {
+                x: (clientX - rect.left) / canvasZoom,
+                y: (clientY - rect.top) / canvasZoom
+            };
+        }
+
+        function applyCanvasZoom(newZoom, preserveCenter, anchorClientX, anchorClientY) {
+            const canvas = document.getElementById('workspace-canvas');
+            const sizer = document.getElementById('canvas-zoom-sizer');
+            const stage = document.getElementById('canvas-stage');
+            const badge = document.getElementById('zoom-level-badge');
+
+            const oldZoom = canvasZoom;
+            const clamped = Math.round(Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, newZoom)) * 100) / 100;
+
+            let logicalAnchorX = 0;
+            let logicalAnchorY = 0;
+            let viewOffsetX = 0;
+            let viewOffsetY = 0;
+
+            if (canvas && preserveCenter) {
+                const rect = canvas.getBoundingClientRect();
+                viewOffsetX = (typeof anchorClientX === 'number') ? (anchorClientX - rect.left) : (canvas.clientWidth / 2);
+                viewOffsetY = (typeof anchorClientY === 'number') ? (anchorClientY - rect.top) : (canvas.clientHeight / 2);
+                logicalAnchorX = (canvas.scrollLeft + viewOffsetX) / oldZoom;
+                logicalAnchorY = (canvas.scrollTop + viewOffsetY) / oldZoom;
+            }
+
+            canvasZoom = clamped;
+            if (sizer) {
+                sizer.style.width = Math.round(CANVAS_VIRTUAL_WIDTH * canvasZoom) + 'px';
+                sizer.style.height = Math.round(CANVAS_VIRTUAL_HEIGHT * canvasZoom) + 'px';
+            }
+            if (stage) {
+                stage.style.transform = 'scale(' + canvasZoom + ')';
+            }
+            if (badge) {
+                badge.innerText = Math.round(canvasZoom * 100) + '%';
+            }
+            if (canvas && preserveCenter) {
+                canvas.scrollLeft = Math.max(0, logicalAnchorX * canvasZoom - viewOffsetX);
+                canvas.scrollTop = Math.max(0, logicalAnchorY * canvasZoom - viewOffsetY);
+            }
+            syncCurrentPageState();
+        }
+
+        function zoomWorkspace(delta) {
+            applyCanvasZoom(canvasZoom + delta, true);
+        }
+
+        function resetWorkspaceZoom() {
+            applyCanvasZoom(1, true);
+        }
+
+        function fitWorkspaceToScreen() {
+            const canvas = document.getElementById('workspace-canvas');
+            if (!canvas) return;
+            if (devices.length === 0) {
+                applyCanvasZoom(1, false);
+                canvas.scrollLeft = 0;
+                canvas.scrollTop = 0;
+                return;
+            }
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            devices.forEach(function(d) {
+                minX = Math.min(minX, d.x);
+                minY = Math.min(minY, d.y);
+                maxX = Math.max(maxX, d.x + 128);
+                maxY = Math.max(maxY, d.y + 120);
+            });
+            const padding = 80;
+            const boxW = Math.max(200, (maxX - minX) + padding * 2);
+            const boxH = Math.max(200, (maxY - minY) + padding * 2);
+            const targetZoom = Math.min(1.25, Math.max(MIN_ZOOM, Math.min(canvas.clientWidth / boxW, canvas.clientHeight / boxH)));
+            applyCanvasZoom(targetZoom, false);
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+            canvas.scrollLeft = Math.max(0, centerX * canvasZoom - canvas.clientWidth / 2);
+            canvas.scrollTop = Math.max(0, centerY * canvasZoom - canvas.clientHeight / 2);
+        }
+
+        function handleWorkspaceWheel(event) {
+            if (event.ctrlKey || event.metaKey || event.altKey) {
+                event.preventDefault();
+                const step = event.deltaY < 0 ? 0.1 : -0.1;
+                applyCanvasZoom(canvasZoom + step, true, event.clientX, event.clientY);
+            }
+        }
+
+        function startCanvasPan(event) {
+            const target = event.target;
+            const isNode = target.closest && target.closest('.canvas-node');
+            const isConn = target.closest && target.closest('g[data-conn-id]');
+            if (isNode || isConn) return;
+
+            if (event.button === 0 && !isConnectionMode) {
+                selectedDeviceId = null;
+                selectedConnectionId = null;
+                showEmptyConfigState();
+                renderWorkspace();
+            }
+
+            if (event.button === 1 || (event.button === 0 && !isConnectionMode)) {
+                const canvas = document.getElementById('workspace-canvas');
+                if (!canvas) return;
+                isPanningCanvas = true;
+                panStartX = event.clientX;
+                panStartY = event.clientY;
+                panStartScrollLeft = canvas.scrollLeft;
+                panStartScrollTop = canvas.scrollTop;
+                canvas.classList.add('canvas-panning');
+                document.addEventListener('mousemove', onCanvasPanMove);
+                document.addEventListener('mouseup', onCanvasPanUp);
+            }
+        }
+
+        function onCanvasPanMove(event) {
+            if (!isPanningCanvas) return;
+            const canvas = document.getElementById('workspace-canvas');
+            if (!canvas) return;
+            canvas.scrollLeft = panStartScrollLeft - (event.clientX - panStartX);
+            canvas.scrollTop = panStartScrollTop - (event.clientY - panStartY);
+        }
+
+        function onCanvasPanUp() {
+            if (!isPanningCanvas) return;
+            isPanningCanvas = false;
+            const canvas = document.getElementById('workspace-canvas');
+            if (canvas) canvas.classList.remove('canvas-panning');
+            document.removeEventListener('mousemove', onCanvasPanMove);
+            document.removeEventListener('mouseup', onCanvasPanUp);
+        }
+
+        function showEmptyConfigState() {
+            const emptyState = document.getElementById('config-empty-state');
+            if (emptyState) emptyState.classList.remove('hidden');
+            const devState = document.getElementById('config-device-state');
+            if (devState) devState.classList.add('hidden');
+            const connState = document.getElementById('config-connection-state');
+            if (connState) connState.classList.add('hidden');
         }
 
         function handleLibraryDragStart(event, type, category) {
@@ -1018,19 +1431,37 @@
             if (canvas) canvas.classList.remove('drag-over');
             try {
                 const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-                const rect = canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left + canvas.scrollLeft - 60;
-                const y = event.clientY - rect.top + canvas.scrollTop - 60;
-                addNewDeviceToWorkspace(data.type, data.category, Math.max(20, x), Math.max(20, y));
+                const coords = getCanvasLogicalCoords(event.clientX, event.clientY);
+                const x = Math.max(15, Math.min(CANVAS_VIRTUAL_WIDTH - 140, Math.round(coords.x - 64)));
+                const y = Math.max(15, Math.min(CANVAS_VIRTUAL_HEIGHT - 140, Math.round(coords.y - 60)));
+                addNewDeviceToWorkspace(data.type, data.category, x, y);
             } catch(e) {}
         }
 
         function addDeviceFromClick(type, category) {
             const canvas = document.getElementById('workspace-canvas');
             if (!canvas) return;
-            const x = canvas.scrollLeft + 150 + ((devices.length * 20) % 300);
-            const y = canvas.scrollTop + 150 + ((devices.length * 20) % 200);
+            const centerX = (canvas.scrollLeft + canvas.clientWidth / 2) / canvasZoom;
+            const centerY = (canvas.scrollTop + canvas.clientHeight / 2) / canvasZoom;
+            const jitterX = ((devices.length % 5) - 2) * 35;
+            const jitterY = ((Math.floor(devices.length / 5) % 4) - 1) * 35;
+            const x = Math.max(20, Math.min(CANVAS_VIRTUAL_WIDTH - 140, Math.round(centerX - 64 + jitterX)));
+            const y = Math.max(20, Math.min(CANVAS_VIRTUAL_HEIGHT - 140, Math.round(centerY - 60 + jitterY)));
             addNewDeviceToWorkspace(type, category, x, y);
+        }
+
+        function syncDeviceCounters() {
+            deviceCounters = { pc: 0, laptop: 0, server: 0, smartphone: 0, router: 0, switch: 0, hub: 0, accesspoint: 0 };
+            devices.forEach(function(d) {
+                const key = (d.type || '').toLowerCase().replace(/\s+/g, '');
+                if (!key) return;
+                deviceCounters[key] = (deviceCounters[key] || 0) + 1;
+                const match = String(d.name || '').match(/-(\d+)$/);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num > deviceCounters[key]) deviceCounters[key] = num;
+                }
+            });
         }
 
         function addNewDeviceToWorkspace(type, category, x, y) {
@@ -1039,7 +1470,7 @@
             const count = deviceCounters[key];
             const nameMap = { 'PC': 'PC', 'Laptop': 'LAPTOP', 'Server': 'SERVER', 'Smartphone': 'PHONE', 'Router': 'ROUTER', 'Switch': 'SWITCH', 'Hub': 'HUB', 'Access Point': 'AP' };
             const uniqueName = (nameMap[type] || type.toUpperCase()) + '-' + count;
-            const uniqueId = 'dev-' + key + '-' + Date.now();
+            const uniqueId = 'dev-' + key + '-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 
             const newDev = {
                 id: uniqueId,
@@ -1049,7 +1480,7 @@
                 x: x,
                 y: y,
                 status: 'ready',
-                network: { ipAddress: '', subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8' },
+                network: { ipAddress: '', subnetMask: '255.255.255.0', gateway: '', dns: '8.8.8.8', interfaces: [] },
                 connections: []
             };
 
@@ -1059,6 +1490,7 @@
             inspectDevice(uniqueId);
             detectTopologyAutomatically();
             runAiNetworkAnalysis();
+            persistWorkspaceAuto();
             showNotification("Added " + uniqueName);
         }
 
@@ -1099,19 +1531,24 @@
                 if (dev.status === 'configured') badge = 'bg-emerald-500';
                 if (dev.status === 'conflict') badge = 'bg-rose-500 animate-ping';
 
-                html += '<div id="' + dev.id + '" ' +
-                    'onmousedown="startDraggingNode(event, \'' + dev.id + '\')" ' +
-                    'onclick="handleNodeClick(event, \'' + dev.id + '\')" ' +
-                    'class="canvas-node absolute bg-slate-900/95 hover:bg-slate-800 border-2 ' + (isSelected ? 'border-cyan-400 node-selected' : 'border-slate-700') + ' p-3 rounded-2xl cursor-pointer shadow-xl transition-all group w-32 flex flex-col items-center text-center z-10 animate-pop pointer-events-auto" ' +
-                    'style="left: ' + dev.x + 'px; top: ' + dev.y + 'px;">' +
+                const safeId = escapeHTML(dev.id);
+                const safeName = escapeHTML(dev.name);
+                const safeIp = escapeHTML(dev.network && dev.network.ipAddress ? dev.network.ipAddress : 'No IP');
+
+                html += '<div id="' + safeId + '" ' +
+                    'onmousedown="startDraggingNode(event, \'' + safeId + '\')" ' +
+                    'onclick="handleNodeClick(event, \'' + safeId + '\')" ' +
+                    'class="canvas-node absolute bg-slate-900/95 hover:bg-slate-800 border-2 ' + (isSelected ? 'border-cyan-400 node-selected' : 'border-slate-700') + ' p-3 rounded-2xl cursor-pointer shadow-xl transition-colors group w-32 flex flex-col items-center text-center z-10 pointer-events-auto" ' +
+                    'style="left: ' + Number(dev.x) + 'px; top: ' + Number(dev.y) + 'px;">' +
                     '<div class="absolute -top-2 -right-2 w-4 h-4 rounded-full ' + badge + ' border-2 border-slate-900"></div>' +
                     '<div class="w-12 h-12 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center text-xl mb-2"><i class="' + getDeviceIconClass(dev.type) + '"></i></div>' +
-                    '<span class="text-xs font-bold text-slate-100 truncate w-full">' + dev.name + '</span>' +
-                    '<span class="text-[10px] text-cyan-400 font-mono mt-0.5 truncate w-full">' + (dev.network && dev.network.ipAddress ? dev.network.ipAddress : 'No IP') + '</span>' +
+                    '<span class="text-xs font-bold text-slate-100 truncate w-full">' + safeName + '</span>' +
+                    '<span class="text-[10px] text-cyan-400 font-mono mt-0.5 truncate w-full">' + safeIp + '</span>' +
                 '</div>';
             });
             if (container) container.innerHTML = html;
             renderConnectionsSVG();
+            renderPageTabs();
         }
 
         function getDeviceIconClass(type) {
@@ -1149,11 +1586,14 @@
                     if (conn.type === 'fiber') stroke = '#F59E0B';
                     if (conn.type === 'wireless') stroke = '#22C55E';
 
-                    svgHtml += '<g class="cursor-pointer" onclick="handleConnectionClick(event, \'' + conn.id + '\')">' +
+                    const safeConnId = escapeHTML(conn.id);
+                    const safeType = escapeHTML(String(conn.type || 'straight').toUpperCase());
+
+                    svgHtml += '<g data-conn-id="' + safeConnId + '" class="cursor-pointer" onclick="handleConnectionClick(event, \'' + safeConnId + '\')">' +
                         '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="transparent" stroke-width="14" />' +
                         '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + stroke + '" stroke-width="' + (isSel ? 4 : 2.5) + '" stroke-dasharray="' + (conn.type === 'wireless' ? '5,5' : 'none') + '" />' +
-                        '<rect x="' + (midX - 22) + '" y="' + (midY - 9) + '" width="44" height="18" rx="4" fill="#111827" stroke="' + stroke + '" stroke-width="1" />' +
-                        '<text x="' + midX + '" y="' + (midY + 3) + '" fill="#E2E8F0" font-size="8" text-anchor="middle" font-weight="600">' + conn.type.toUpperCase() + '</text>' +
+                        '<rect x="' + (midX - 24) + '" y="' + (midY - 9) + '" width="48" height="18" rx="4" fill="#111827" stroke="' + stroke + '" stroke-width="1" />' +
+                        '<text x="' + midX + '" y="' + (midY + 3) + '" fill="#E2E8F0" font-size="8" text-anchor="middle" font-weight="600">' + safeType + '</text>' +
                     '</g>';
                 }
             });
@@ -1169,20 +1609,25 @@
 
         function startDraggingNode(event, nodeId) {
             if (isConnectionMode || activeTool === 'connect') return;
+            if (event.button !== 0) return;
             event.stopPropagation();
             activeDraggingNodeId = nodeId;
-            const el = document.getElementById(nodeId);
-            if (!el) return;
-            dragOffsetX = event.clientX - el.offsetLeft;
-            dragOffsetY = event.clientY - el.offsetTop;
+            const dev = devices.find(function(d) { return d.id === nodeId; });
+            if (!dev) return;
+            dragStartMouseX = event.clientX;
+            dragStartMouseY = event.clientY;
+            dragStartNodeX = dev.x;
+            dragStartNodeY = dev.y;
             document.addEventListener('mousemove', onNodeMouseMove);
             document.addEventListener('mouseup', onNodeMouseUp);
         }
 
         function onNodeMouseMove(event) {
             if (!activeDraggingNodeId) return;
-            const x = Math.max(10, event.clientX - dragOffsetX);
-            const y = Math.max(10, event.clientY - dragOffsetY);
+            const dx = (event.clientX - dragStartMouseX) / canvasZoom;
+            const dy = (event.clientY - dragStartMouseY) / canvasZoom;
+            const x = Math.max(10, Math.min(CANVAS_VIRTUAL_WIDTH - 140, Math.round(dragStartNodeX + dx)));
+            const y = Math.max(10, Math.min(CANVAS_VIRTUAL_HEIGHT - 140, Math.round(dragStartNodeY + dy)));
             const dev = devices.find(function(d) { return d.id === activeDraggingNodeId; });
             if (dev) {
                 dev.x = x;
@@ -1197,20 +1642,20 @@
         }
 
         function onNodeMouseUp() {
-            activeDraggingNodeId = null;
+            if (activeDraggingNodeId) {
+                activeDraggingNodeId = null;
+                persistWorkspaceAuto();
+            }
             document.removeEventListener('mousemove', onNodeMouseMove);
             document.removeEventListener('mouseup', onNodeMouseUp);
         }
 
         function handleWorkspaceMouseMove(event) {
-            const canvas = document.getElementById('workspace-canvas');
-            if (!canvas) return;
-            const rect = canvas.getBoundingClientRect();
-            mouseX = event.clientX - rect.left + canvas.scrollLeft;
-            mouseY = event.clientY - rect.top + canvas.scrollTop;
-            if (isConnectionMode && connectionSourceId) {
-                renderConnectionsSVG();
-            }
+            if (!isConnectionMode || !connectionSourceId) return;
+            const coords = getCanvasLogicalCoords(event.clientX, event.clientY);
+            mouseX = coords.x;
+            mouseY = coords.y;
+            renderConnectionsSVG();
         }
 
         function setTool(toolName) {
@@ -1218,6 +1663,12 @@
             isConnectionMode = (toolName === 'connect');
             const banner = document.getElementById('connection-banner');
             if (banner) banner.style.display = isConnectionMode ? 'flex' : 'none';
+            const selBtn = document.getElementById('tool-select');
+            const connBtn = document.getElementById('tool-connect');
+            if (selBtn && connBtn) {
+                selBtn.className = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 " + (!isConnectionMode ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30" : "text-slate-400 hover:text-white hover:bg-slate-800");
+                connBtn.className = "tool-btn px-2.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 " + (isConnectionMode ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30" : "text-slate-400 hover:text-white hover:bg-slate-800");
+            }
             if (isConnectionMode) showNotification("Connection Mode Active");
         }
 
@@ -1252,7 +1703,7 @@
                         return;
                     }
                     connections.push({
-                        id: 'conn-' + Date.now(),
+                        id: 'conn-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
                         source: connectionSourceId,
                         target: nodeId,
                         type: cableType,
@@ -1262,6 +1713,7 @@
                     renderWorkspace();
                     detectTopologyAutomatically();
                     runAiNetworkAnalysis();
+                    persistWorkspaceAuto();
                     showNotification("Connection created successfully!");
                     connectionSourceId = null;
                 }
@@ -1300,6 +1752,9 @@
             
             const typeEl = document.getElementById('cfg-device-type');
             if (typeEl) typeEl.innerText = dev.type;
+
+            const iconWrap = document.getElementById('cfg-device-icon');
+            if (iconWrap) iconWrap.innerHTML = '<i class="' + getDeviceIconClass(dev.type) + '"></i>';
             
             const nameInput = document.getElementById('input-dev-name');
             if (nameInput) nameInput.value = dev.name;
@@ -1312,6 +1767,18 @@
             
             const gwInput = document.getElementById('input-gateway');
             if (gwInput) gwInput.value = (dev.network && dev.network.gateway) ? dev.network.gateway : '';
+
+            const routerIfGroup = document.getElementById('router-interfaces-group');
+            const routerIfInput = document.getElementById('input-router-interfaces');
+            if (routerIfGroup && routerIfInput) {
+                if (dev.type === 'Router') {
+                    routerIfGroup.classList.remove('hidden');
+                    routerIfInput.value = (dev.network && Array.isArray(dev.network.interfaces)) ? dev.network.interfaces.join(', ') : '';
+                } else {
+                    routerIfGroup.classList.add('hidden');
+                    routerIfInput.value = '';
+                }
+            }
             
             updateNetworkCard(dev.network ? dev.network.ipAddress : '', dev.network ? dev.network.subnetMask : '255.255.255.0');
         }
@@ -1339,6 +1806,7 @@
             const ipInput = document.getElementById('input-ip');
             const subnetInput = document.getElementById('input-subnet');
             const gatewayInput = document.getElementById('input-gateway');
+            const routerIfInput = document.getElementById('input-router-interfaces');
 
             const name = nameInput ? nameInput.value.trim() : dev.name;
             const ip = ipInput ? ipInput.value.trim() : '';
@@ -1353,12 +1821,29 @@
                 showNotification("Invalid Subnet Mask format!");
                 return;
             }
+            if (gateway !== '' && !validateIPAddress(gateway)) {
+                showNotification("Invalid Gateway IP format!");
+                return;
+            }
+
+            let interfaces = [];
+            if (dev.type === 'Router' && routerIfInput && routerIfInput.value.trim() !== '') {
+                const rawList = routerIfInput.value.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+                for (let i = 0; i < rawList.length; i++) {
+                    if (!validateIPAddress(rawList[i])) {
+                        showNotification("Invalid Router Interface IP: " + rawList[i]);
+                        return;
+                    }
+                }
+                interfaces = rawList;
+            }
 
             if (name) dev.name = name;
-            dev.network = { ipAddress: ip, subnetMask: subnet, gateway: gateway, dns: '8.8.8.8' };
+            dev.network = { ipAddress: ip, subnetMask: subnet, gateway: gateway, dns: '8.8.8.8', interfaces: interfaces };
             renderWorkspace();
             inspectDevice(selectedDeviceId);
             runAiNetworkAnalysis();
+            persistWorkspaceAuto();
             showNotification("Configuration applied successfully!");
         }
 
@@ -1386,6 +1871,7 @@
             const connTypeInput = document.getElementById('input-conn-type');
             if (connTypeInput) conn.type = connTypeInput.value;
             renderWorkspace();
+            persistWorkspaceAuto();
             showNotification("Connection cable updated!");
         }
 
@@ -1548,44 +2034,98 @@
             }
 
             topologyState = { current: type, generated: true, modified: false, confidence: 100 };
+            selectedDeviceId = null;
+            selectedConnectionId = null;
+            lastSuccessfulPing = null;
+            showEmptyConfigState();
+            syncDeviceCounters();
             toggleTopologyModal(false);
             renderWorkspace();
+            fitWorkspaceToScreen();
+            detectTopologyAutomatically();
             runAiNetworkAnalysis();
+            persistWorkspaceAuto();
             showNotification("Successfully generated " + type + " Topology!");
         }
 
         function detectTopologyAutomatically() {
-            if (devices.length === 0) {
-                const badge = document.getElementById('detected-topology-badge');
-                if (badge) badge.innerText = "Detected Topology: Empty Workspace";
-                return { detected: "EMPTY", confidence: 100 };
-            }
-
             const n = devices.length;
             const e = connections.length;
             let detected = "CUSTOM";
 
-            if (n >= 3) {
-                let maxDegree = 0;
+            if (n === 0) {
+                const badge = document.getElementById('detected-topology-badge');
+                if (badge) badge.innerText = "Detected Topology: Empty Workspace";
+                topologyState.detected = "EMPTY";
+                return { detected: "EMPTY", confidence: 100 };
+            }
+
+            if (n === 1) {
+                detected = "SINGLE NODE";
+            } else if (n === 2 && e === 1) {
+                detected = "POINT-TO-POINT";
+            } else if (n >= 3) {
+                const adj = {};
                 const degrees = {};
-                devices.forEach(function(d) { degrees[d.id] = 0; });
-                connections.forEach(function(c) {
-                    if (degrees[c.source] !== undefined) degrees[c.source]++;
-                    if (degrees[c.target] !== undefined) degrees[c.target]++;
-                });
-                Object.keys(degrees).forEach(function(id) {
-                    if (degrees[id] > maxDegree) maxDegree = degrees[id];
+                devices.forEach(function(d) {
+                    adj[d.id] = [];
+                    degrees[d.id] = 0;
                 });
 
-                if (maxDegree >= n - 2 && e === n - 1) detected = "STAR";
-                else if (n >= 4 && e === n) detected = "RING";
-                else if (e === (n * (n - 1)) / 2) detected = "MESH";
+                let hasSelfLoop = false;
+                connections.forEach(function(c) {
+                    if (c.source === c.target) {
+                        hasSelfLoop = true;
+                        return;
+                    }
+                    if (adj[c.source] && adj[c.target]) {
+                        adj[c.source].push(c.target);
+                        adj[c.target].push(c.source);
+                        degrees[c.source]++;
+                        degrees[c.target]++;
+                    }
+                });
+
+                // Check graph connectivity via BFS
+                const visited = new Set();
+                const queue = [devices[0].id];
+                visited.add(devices[0].id);
+                while (queue.length > 0) {
+                    const curr = queue.shift();
+                    adj[curr].forEach(function(nxt) {
+                        if (!visited.has(nxt)) {
+                            visited.add(nxt);
+                            queue.push(nxt);
+                        }
+                    });
+                }
+
+                const isConnected = !hasSelfLoop && visited.size === n;
+                if (isConnected) {
+                    const degValues = Object.values(degrees);
+                    const maxDegree = Math.max.apply(null, degValues);
+                    const degreeOneCount = degValues.filter(function(deg) { return deg === 1; }).length;
+                    const degreeTwoCount = degValues.filter(function(deg) { return deg === 2; }).length;
+                    const centerNode = devices.find(function(d) { return degrees[d.id] === n - 1; });
+
+                    if (e === (n * (n - 1)) / 2) {
+                        detected = "MESH";
+                    } else if (e === n && degreeTwoCount === n) {
+                        detected = "RING";
+                    } else if (e === n - 1 && maxDegree === n - 1 && degreeOneCount === n - 1 && (n > 3 || (centerNode && centerNode.category === 'Network Device'))) {
+                        detected = "STAR";
+                    } else if (e === n - 1 && maxDegree === 2 && degreeOneCount === 2 && degreeTwoCount === n - 2) {
+                        detected = "BUS";
+                    } else if (n >= 4 && e === n - 1) {
+                        detected = "TREE";
+                    }
+                }
             }
 
             topologyState.detected = detected;
             const badge = document.getElementById('detected-topology-badge');
             if (badge) badge.innerText = "Detected Topology: " + detected;
-            return { detected: detected, confidence: 80 };
+            return { detected: detected, confidence: 90 };
         }
 
         function toggleTerminalModal(show) {
@@ -1605,7 +2145,9 @@
             devices.filter(function(d) {
                 return ['PC', 'Laptop', 'Server', 'Smartphone'].includes(d.type);
             }).forEach(function(pc) {
-                html += '<option value="' + pc.id + '">' + pc.name + ' (' + (pc.network && pc.network.ipAddress ? pc.network.ipAddress : 'No IP') + ')</option>';
+                const safeId = escapeHTML(pc.id);
+                const safeLabel = escapeHTML(pc.name + ' (' + (pc.network && pc.network.ipAddress ? pc.network.ipAddress : 'No IP') + ')');
+                html += '<option value="' + safeId + '">' + safeLabel + '</option>';
             });
             select.innerHTML = html || '<option value="">No End Devices</option>';
         }
@@ -1652,15 +2194,131 @@
             }
         }
 
-        function appendLog(html, colorClass) {
+        function appendLog(text, colorClass) {
             const container = document.getElementById('terminal-log-container');
             if (!container) return;
             const div = document.createElement('div');
             div.className = colorClass || 'text-slate-200';
-            div.innerHTML = html.replace(/\n/g, '<br>');
+            div.innerHTML = escapeHTML(text).replace(/\n/g, '<br>');
             container.appendChild(div);
             const screen = document.getElementById('terminal-screen');
             if (screen) screen.scrollTop = screen.scrollHeight;
+        }
+
+        function getDeviceAllIPs(dev) {
+            const ips = [];
+            if (dev.network && validateIPAddress(dev.network.ipAddress)) {
+                ips.push(dev.network.ipAddress);
+            }
+            if (dev.type === 'Router' && dev.network && Array.isArray(dev.network.interfaces)) {
+                dev.network.interfaces.forEach(function(ip) {
+                    if (validateIPAddress(ip) && !ips.includes(ip)) ips.push(ip);
+                });
+            }
+            return ips;
+        }
+
+        function findPathBetweenDevices(srcId, tgtId) {
+            if (srcId === tgtId) return [srcId];
+            const visited = new Set([srcId]);
+            const queue = [[srcId]];
+            while (queue.length > 0) {
+                const path = queue.shift();
+                const curr = path[path.length - 1];
+                if (curr === tgtId) return path;
+                connections.forEach(function(conn) {
+                    let nextId = null;
+                    if (conn.source === curr) nextId = conn.target;
+                    else if (conn.target === curr) nextId = conn.source;
+                    if (nextId && !visited.has(nextId)) {
+                        visited.add(nextId);
+                        queue.push(path.concat([nextId]));
+                    }
+                });
+            }
+            return null;
+        }
+
+        function findReachableRouters(startId) {
+            const visited = new Set([startId]);
+            const queue = [startId];
+            const routers = [];
+            while (queue.length > 0) {
+                const curr = queue.shift();
+                const dev = devices.find(function(d) { return d.id === curr; });
+                if (dev && dev.type === 'Router') routers.push(dev);
+                connections.forEach(function(conn) {
+                    let nextId = null;
+                    if (conn.source === curr) nextId = conn.target;
+                    else if (conn.target === curr) nextId = conn.source;
+                    if (nextId && !visited.has(nextId)) {
+                        visited.add(nextId);
+                        queue.push(nextId);
+                    }
+                });
+            }
+            return routers;
+        }
+
+        function verifyLayer3Route(srcDev, targetDev, srcNet, srcSubnet, tgtNet, tgtSubnet) {
+            const routers = findReachableRouters(srcDev.id);
+            if (routers.length === 0) {
+                return {
+                    ok: false,
+                    reason: "Subnet mismatch: source network " + srcNet + " is different from target network " + tgtNet + " — no Router connected on path."
+                };
+            }
+
+            if (srcDev.type !== 'Router') {
+                const srcGw = srcDev.network ? srcDev.network.gateway : '';
+                if (!validateIPAddress(srcGw)) {
+                    return {
+                        ok: false,
+                        reason: "Subnet mismatch (" + srcNet + " -> " + tgtNet + "): Source device (" + srcDev.name + ") has no valid Default Gateway configured."
+                    };
+                }
+                if (getNetworkAddress(srcGw, srcSubnet) !== srcNet) {
+                    return {
+                        ok: false,
+                        reason: "Source gateway (" + srcGw + ") is not in source subnet (" + srcNet + ")."
+                    };
+                }
+                const srcRouterMatch = routers.some(function(r) { return getDeviceAllIPs(r).includes(srcGw); });
+                if (!srcRouterMatch) {
+                    return {
+                        ok: false,
+                        reason: "Source gateway (" + srcGw + ") is not configured on any reachable Router interface."
+                    };
+                }
+            }
+
+            if (targetDev.type !== 'Router') {
+                const tgtGw = targetDev.network ? targetDev.network.gateway : '';
+                if (!validateIPAddress(tgtGw)) {
+                    return {
+                        ok: false,
+                        reason: "Target device (" + targetDev.name + ") has no valid Default Gateway configured for return traffic."
+                    };
+                }
+                if (getNetworkAddress(tgtGw, tgtSubnet) !== tgtNet) {
+                    return {
+                        ok: false,
+                        reason: "Target gateway (" + tgtGw + ") is not in target subnet (" + tgtNet + ")."
+                    };
+                }
+                const tgtRouterMatch = routers.some(function(r) { return getDeviceAllIPs(r).includes(tgtGw); });
+                if (!tgtRouterMatch) {
+                    return {
+                        ok: false,
+                        reason: "Target gateway (" + tgtGw + ") is not configured on any reachable Router interface. (Add it in Router Interfaces)"
+                    };
+                }
+            }
+
+            return {
+                ok: true,
+                via: routers.map(function(r) { return r.name; }).join(', ')
+            };
         }
 
         function runPingSimulation(targetIP) {
@@ -1707,9 +2365,9 @@
                 return;
             }
 
-            // Destination device lookup
+            // Destination device lookup (including Router secondary interfaces)
             const targetDev = devices.find(function(d) {
-                return d.network && d.network.ipAddress === targetIP;
+                return getDeviceAllIPs(d).includes(targetIP);
             });
 
             if (!targetDev) {
@@ -1726,9 +2384,14 @@
                 return;
             }
 
+            if (conflicts[targetIP] && conflicts[targetIP].length > 1) {
+                appendLog("Error: IP Conflict detected on target IP (" + targetIP + "). Multiple devices share this address.", 'text-rose-400 font-bold');
+                return;
+            }
+
             // Physical path connectivity check
-            const hasPath = checkDeviceConnectivity(srcDev.id, targetDev.id);
-            if (!hasPath) {
+            const path = findPathBetweenDevices(srcDev.id, targetDev.id);
+            if (!path) {
                 appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
                 let c = 0;
                 const unreachableTimer = setInterval(function() {
@@ -1742,36 +2405,59 @@
                 return;
             }
 
-            // Subnet and network segment verification (Strict different network check)
+            // Subnet and Layer-3 routing verification
             const srcSubnet = (srcDev.network && srcDev.network.subnetMask) ? srcDev.network.subnetMask : '255.255.255.0';
             const tgtSubnet = (targetDev.network && targetDev.network.subnetMask) ? targetDev.network.subnetMask : '255.255.255.0';
             const srcNet = getNetworkAddress(srcDev.network.ipAddress, srcSubnet);
-            const tgtNet = getNetworkAddress(targetDev.network.ipAddress, tgtSubnet);
+            const tgtNet = getNetworkAddress(targetIP, tgtSubnet);
 
+            let routedVia = null;
             if (srcNet !== tgtNet) {
-                appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
-                let c = 0;
-                const diffNetTimer = setInterval(function() {
-                    c++;
-                    appendLog("Destination host unreachable. (Subnet mismatch: source network " + srcNet + " is different from target network " + tgtNet + " — requires a configured router gateway)", 'text-amber-400');
-                    if (c === 4) {
-                        clearInterval(diffNetTimer);
-                        appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)", 'text-rose-400 font-bold');
-                    }
-                }, 450);
-                return;
+                const routeCheck = verifyLayer3Route(srcDev, targetDev, srcNet, srcSubnet, tgtNet, tgtSubnet);
+                if (!routeCheck.ok) {
+                    appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+                    let c = 0;
+                    const diffNetTimer = setInterval(function() {
+                        c++;
+                        appendLog("Destination host unreachable. (" + routeCheck.reason + ")", 'text-amber-400');
+                        if (c === 4) {
+                            clearInterval(diffNetTimer);
+                            appendLog("Ping statistics for " + targetIP + ": Packets: Sent = 4, Received = 0, Lost = 4 (100% loss)", 'text-rose-400 font-bold');
+                        }
+                    }, 450);
+                    return;
+                }
+                routedVia = routeCheck.via;
             }
 
-            // Successful ping simulation (Same subnet and valid path)
-            appendLog("Pinging " + targetIP + " with 32 bytes of data:", 'text-slate-300');
+            const viaSwitch = path.some(function(id) {
+                const node = devices.find(function(d) { return d.id === id; });
+                return node && node.type === 'Switch';
+            });
+
+            // Successful ping simulation (Same subnet or valid routed path)
+            appendLog("Pinging " + targetIP + " with 32 bytes of data:" + (routedVia ? " [Routed via " + routedVia + "]" : ""), 'text-slate-300');
             let count = 0;
+            const ttl = routedVia ? 127 : 128;
+            const times = [];
             const successTimer = setInterval(function() {
                 count++;
-                const time = Math.floor(Math.random() * 4) + 2;
-                appendLog("Reply from " + targetIP + ": bytes=32 time=" + time + "ms TTL=128", 'text-emerald-400');
+                const time = Math.floor(Math.random() * 4) + (routedVia ? 5 : 2);
+                times.push(time);
+                appendLog("Reply from " + targetIP + ": bytes=32 time=" + time + "ms TTL=" + ttl, 'text-emerald-400');
                 if (count === 4) {
                     clearInterval(successTimer);
-                    appendLog("Ping statistics for " + targetIP + ":\n  Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)\n  Approximate round trip times: Min = 2ms, Max = 5ms, Avg = 3ms", 'text-emerald-300 font-bold');
+                    const minT = Math.min.apply(null, times);
+                    const maxT = Math.max.apply(null, times);
+                    const avgT = Math.round(times.reduce(function(a, b) { return a + b; }, 0) / times.length);
+                    lastSuccessfulPing = {
+                        srcId: srcDev.id,
+                        tgtId: targetDev.id,
+                        viaSwitch: viaSwitch,
+                        routedVia: routedVia,
+                        timestamp: Date.now()
+                    };
+                    appendLog("Ping statistics for " + targetIP + ":\n  Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)\n  Approximate round trip times: Min = " + minT + "ms, Max = " + maxT + "ms, Avg = " + avgT + "ms", 'text-emerald-300 font-bold');
                 }
             }, 500);
         }
@@ -1868,8 +2554,42 @@
                         devices: [d.id]
                     });
                     score -= 10;
+                } else if (d.network.gateway && validateIPAddress(d.network.gateway)) {
+                    const devNet = getNetworkAddress(d.network.ipAddress, d.network.subnetMask || '255.255.255.0');
+                    const gwNet = getNetworkAddress(d.network.gateway, d.network.subnetMask || '255.255.255.0');
+                    if (devNet && gwNet && devNet !== gwNet) {
+                        problems.push({
+                            id: 'gw-mismatch',
+                            severity: 'medium',
+                            title: 'Gateway Subnet Mismatch',
+                            desc: 'Gateway ' + d.network.gateway + ' on "' + d.name + '" is outside subnet ' + devNet + '.',
+                            fix: 'Set gateway IP within the same subnet as the device.',
+                            devices: [d.id]
+                        });
+                        score -= 10;
+                    }
                 }
             });
+
+            const activeSubnets = new Set();
+            devices.filter(function(d) {
+                return ['PC', 'Laptop', 'Server', 'Smartphone'].includes(d.type) && d.network && validateIPAddress(d.network.ipAddress);
+            }).forEach(function(d) {
+                const net = getNetworkAddress(d.network.ipAddress, d.network.subnetMask || '255.255.255.0');
+                if (net) activeSubnets.add(net);
+            });
+            const hasRouter = devices.some(function(d) { return d.type === 'Router'; });
+            if (activeSubnets.size > 1 && !hasRouter) {
+                problems.push({
+                    id: 'multi-subnet-no-router',
+                    severity: 'high',
+                    title: 'Multiple Subnets Without Router',
+                    desc: 'Detected ' + activeSubnets.size + ' different subnets (' + Array.from(activeSubnets).join(', ') + ') with no Router in workspace.',
+                    fix: 'Add a Router and configure default gateways for cross-subnet communication.',
+                    devices: []
+                });
+                score -= 15;
+            }
 
             score = Math.max(0, score);
             diagnosticState.healthScore = score;
@@ -1919,15 +2639,15 @@
             } else {
                 problems.forEach(function(p, idx) {
                     const badgeColor = (p.severity === 'critical') ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
-                    const devIdsJoined = (p.devices && p.devices.length > 0) ? p.devices.join(',') : '';
+                    const devIdsJoined = (p.devices && p.devices.length > 0) ? escapeHTML(p.devices.join(',')) : '';
                     html += '<div class="bg-slate-950 border border-slate-800/80 p-2.5 rounded-lg space-y-1">' +
                         '<div class="flex items-center justify-between">' +
-                            '<span class="font-bold text-slate-200">' + p.title + '</span>' +
-                            '<span class="text-[9px] uppercase px-1.5 py-0.5 rounded border ' + badgeColor + '">' + p.severity + '</span>' +
+                            '<span class="font-bold text-slate-200">' + escapeHTML(p.title) + '</span>' +
+                            '<span class="text-[9px] uppercase px-1.5 py-0.5 rounded border ' + badgeColor + '">' + escapeHTML(p.severity) + '</span>' +
                         '</div>' +
-                        '<p class="text-slate-400 text-[11px]">' + p.desc + '</p>' +
+                        '<p class="text-slate-400 text-[11px]">' + escapeHTML(p.desc) + '</p>' +
                         '<div class="pt-1 flex items-center justify-between">' +
-                            '<span class="text-cyan-400 text-[10px]">💡 ' + p.fix + '</span>' +
+                            '<span class="text-cyan-400 text-[10px]">💡 ' + escapeHTML(p.fix) + '</span>' +
                             (devIdsJoined ? '<button onclick="highlightProblemDevices(\'' + devIdsJoined + '\')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-[10px]">Highlight</button>' : '') +
                         '</div>' +
                     '</div>';
@@ -1986,34 +2706,366 @@
             if (p.devices) highlightProblemDevices(p.devices);
         }
 
-        function saveProject() {
-            localStorage.setItem('ns_project', JSON.stringify({
-                devices: devices,
-                connections: connections,
-                topologyState: topologyState
-            }));
-            showNotification("Project saved to LocalStorage!");
+        function createBlankPage(name) {
+            return {
+                id: 'page-' + Date.now() + '-' + Math.floor(Math.random() * 10000),
+                name: name || ('Simulasi ' + (simulationPages.length + 1)),
+                devices: [],
+                connections: [],
+                topologyState: { current: 'CUSTOM', generated: false, modified: false, confidence: 0 },
+                zoom: 1,
+                scrollLeft: 0,
+                scrollTop: 0,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
         }
 
-        function loadSavedProject() {
-            const saved = safeGetJSON('ns_project', null);
-            if (saved) {
-                devices = saved.devices || [];
-                connections = saved.connections || [];
-                topologyState = saved.topologyState || topologyState;
-                renderWorkspace();
+        function normalizePageData(raw, fallbackName) {
+            const rawDevices = Array.isArray(raw && raw.devices) ? raw.devices : [];
+            const rawConnections = Array.isArray(raw && raw.connections) ? raw.connections : [];
+            const normDevices = rawDevices.map(function(d, idx) {
+                const net = d && d.network ? d.network : {};
+                return {
+                    id: String((d && d.id) || ('dev-imp-' + Date.now() + '-' + idx)),
+                    type: String((d && d.type) || 'PC'),
+                    category: String((d && d.category) || 'End Device'),
+                    name: String((d && d.name) || ('Device-' + (idx + 1))),
+                    x: Number.isFinite(Number(d && d.x)) ? Number(d.x) : (120 + idx * 80),
+                    y: Number.isFinite(Number(d && d.y)) ? Number(d.y) : 140,
+                    status: String((d && d.status) || 'ready'),
+                    network: {
+                        ipAddress: String(net.ipAddress || ''),
+                        subnetMask: String(net.subnetMask || '255.255.255.0'),
+                        gateway: String(net.gateway || ''),
+                        dns: String(net.dns || '8.8.8.8'),
+                        interfaces: Array.isArray(net.interfaces) ? net.interfaces.map(String) : []
+                    },
+                    connections: []
+                };
+            });
+            const devIds = new Set(normDevices.map(function(d) { return d.id; }));
+            const normConns = rawConnections.filter(function(c) {
+                return c && devIds.has(String(c.source)) && devIds.has(String(c.target)) && c.source !== c.target;
+            }).map(function(c, idx) {
+                return {
+                    id: String(c.id || ('conn-imp-' + Date.now() + '-' + idx)),
+                    source: String(c.source),
+                    target: String(c.target),
+                    type: ['straight', 'crossover', 'fiber', 'wireless'].includes(c.type) ? c.type : 'straight',
+                    status: String(c.status || 'connected')
+                };
+            });
+            return {
+                id: String((raw && raw.id) || ('page-' + Date.now() + '-' + Math.floor(Math.random() * 10000))),
+                name: String((raw && raw.name) || fallbackName || 'Simulasi Baru'),
+                devices: normDevices,
+                connections: normConns,
+                topologyState: (raw && raw.topologyState) ? raw.topologyState : { current: 'CUSTOM', generated: false, modified: false, confidence: 0 },
+                zoom: (raw && typeof raw.zoom === 'number') ? Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, raw.zoom)) : 1,
+                scrollLeft: (raw && typeof raw.scrollLeft === 'number') ? raw.scrollLeft : 0,
+                scrollTop: (raw && typeof raw.scrollTop === 'number') ? raw.scrollTop : 0,
+                createdAt: (raw && raw.createdAt) || new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+        }
+
+        function getActivePage() {
+            return simulationPages.find(function(p) { return p.id === activePageId; }) || simulationPages[0] || null;
+        }
+
+        function syncCurrentPageState() {
+            const page = getActivePage();
+            if (!page) return;
+            const canvas = document.getElementById('workspace-canvas');
+            page.devices = JSON.parse(JSON.stringify(devices));
+            page.connections = JSON.parse(JSON.stringify(connections));
+            page.topologyState = JSON.parse(JSON.stringify(topologyState));
+            page.zoom = canvasZoom;
+            if (canvas) {
+                page.scrollLeft = canvas.scrollLeft;
+                page.scrollTop = canvas.scrollTop;
+            }
+            page.updatedAt = new Date().toISOString();
+        }
+
+        function persistWorkspaceAuto() {
+            syncCurrentPageState();
+            const payload = {
+                version: 2,
+                activePageId: activePageId,
+                pages: simulationPages,
+                updatedAt: new Date().toISOString()
+            };
+            localStorage.setItem(STORAGE_KEY_PROJECT, JSON.stringify(payload));
+            const lbl = document.getElementById('last-saved-label');
+            if (lbl) lbl.innerText = 'Saved ' + new Date().toLocaleTimeString();
+        }
+
+        function loadPageIntoWorkspace(page) {
+            if (!page) return;
+            activePageId = page.id;
+            devices = JSON.parse(JSON.stringify(page.devices || []));
+            connections = JSON.parse(JSON.stringify(page.connections || []));
+            topologyState = JSON.parse(JSON.stringify(page.topologyState || { current: 'CUSTOM', generated: false, modified: false, confidence: 0 }));
+            selectedDeviceId = null;
+            selectedConnectionId = null;
+            lastSuccessfulPing = null;
+            cancelConnectionMode();
+            showEmptyConfigState();
+            syncDeviceCounters();
+            applyCanvasZoom(typeof page.zoom === 'number' ? page.zoom : 1, false);
+            const canvas = document.getElementById('workspace-canvas');
+            if (canvas) {
+                canvas.scrollLeft = page.scrollLeft || 0;
+                canvas.scrollTop = page.scrollTop || 0;
+            }
+            renderWorkspace();
+            detectTopologyAutomatically();
+            runAiNetworkAnalysis();
+        }
+
+        function renderPageTabs() {
+            const container = document.getElementById('simulation-pages-tabs');
+            if (!container) return;
+            let html = '';
+            simulationPages.forEach(function(page) {
+                const isActive = page.id === activePageId;
+                const safeId = escapeHTML(page.id);
+                const safeName = escapeHTML(page.name);
+                html += '<div ondblclick="renameSimulationPage(\'' + safeId + '\')" class="group flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs cursor-pointer border transition shrink-0 ' +
+                    (isActive ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40 font-semibold shadow-sm' : 'bg-slate-900/70 text-slate-400 hover:text-slate-200 border-slate-800 hover:border-slate-700') + '" ' +
+                    'onclick="switchSimulationPage(\'' + safeId + '\')">' +
+                    '<i class="fa-regular fa-file-lines text-[11px] ' + (isActive ? 'text-cyan-400' : 'text-slate-500') + '"></i>' +
+                    '<span class="max-w-[140px] truncate">' + safeName + '</span>' +
+                    '<button onclick="event.stopPropagation(); renameSimulationPage(\'' + safeId + '\')" title="Rename Page" class="opacity-0 group-hover:opacity-100 hover:text-cyan-300 text-[10px] px-0.5 transition"><i class="fa-solid fa-pen"></i></button>' +
+                    '<button onclick="event.stopPropagation(); deleteSimulationPage(\'' + safeId + '\')" title="Close Page" class="opacity-60 hover:opacity-100 hover:text-rose-400 text-[11px] px-0.5 transition"><i class="fa-solid fa-xmark"></i></button>' +
+                '</div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function switchSimulationPage(pageId) {
+            if (pageId === activePageId) return;
+            syncCurrentPageState();
+            const target = simulationPages.find(function(p) { return p.id === pageId; });
+            if (!target) return;
+            loadPageIntoWorkspace(target);
+            persistWorkspaceAuto();
+        }
+
+        function createNewSimulationPage(customName) {
+            syncCurrentPageState();
+            const newPage = createBlankPage(customName);
+            simulationPages.push(newPage);
+            loadPageIntoWorkspace(newPage);
+            persistWorkspaceAuto();
+            showNotification("Created new page: " + newPage.name);
+        }
+
+        function duplicateCurrentPage() {
+            const current = getActivePage();
+            if (!current) return;
+            syncCurrentPageState();
+            const cloned = normalizePageData(JSON.parse(JSON.stringify(current)), current.name + ' Copy');
+            cloned.id = 'page-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+            cloned.name = current.name + ' Copy';
+            cloned.createdAt = new Date().toISOString();
+            simulationPages.push(cloned);
+            loadPageIntoWorkspace(cloned);
+            persistWorkspaceAuto();
+            showNotification("Duplicated page as " + cloned.name);
+        }
+
+        function renameSimulationPage(pageId) {
+            const page = simulationPages.find(function(p) { return p.id === pageId; });
+            if (!page) return;
+            const newName = prompt("Masukkan nama halaman simulasi:", page.name);
+            if (newName && newName.trim() !== '') {
+                page.name = newName.trim();
+                renderPageTabs();
+                persistWorkspaceAuto();
+                showNotification("Page renamed to " + page.name);
             }
         }
 
+        function deleteSimulationPage(pageId) {
+            const idx = simulationPages.findIndex(function(p) { return p.id === pageId; });
+            if (idx === -1) return;
+            const targetPage = simulationPages[idx];
+
+            if (simulationPages.length <= 1) {
+                confirmResetSimulation();
+                return;
+            }
+
+            const doDelete = function() {
+                simulationPages.splice(idx, 1);
+                if (activePageId === pageId) {
+                    const nextPage = simulationPages[Math.max(0, idx - 1)];
+                    loadPageIntoWorkspace(nextPage);
+                } else {
+                    renderPageTabs();
+                }
+                persistWorkspaceAuto();
+                showNotification("Closed page: " + targetPage.name);
+            };
+
+            const devCount = (pageId === activePageId) ? devices.length : (targetPage.devices ? targetPage.devices.length : 0);
+            if (devCount > 0) {
+                openModal("Delete Simulation Page?", "Hapus halaman \"" + targetPage.name + "\" beserta " + devCount + " perangkat di dalamnya?", "fa-solid fa-trash text-rose-400", "Delete Page", "bg-rose-500", function() {
+                    closeModal();
+                    doDelete();
+                });
+            } else {
+                doDelete();
+            }
+        }
+
+        function saveProject() {
+            persistWorkspaceAuto();
+            showNotification("Project & all pages saved to LocalStorage!");
+        }
+
+        function loadSavedProject() {
+            const saved = safeGetJSON(STORAGE_KEY_PROJECT, null);
+            if (saved && Array.isArray(saved.pages) && saved.pages.length > 0) {
+                simulationPages = saved.pages.map(function(p, idx) {
+                    return normalizePageData(p, 'Simulasi ' + (idx + 1));
+                });
+                const found = simulationPages.find(function(p) { return p.id === saved.activePageId; });
+                loadPageIntoWorkspace(found || simulationPages[0]);
+            } else if (saved && Array.isArray(saved.devices)) {
+                // Migrate legacy v1 single-page format
+                const migrated = normalizePageData({
+                    name: 'Simulasi 1',
+                    devices: saved.devices,
+                    connections: saved.connections || [],
+                    topologyState: saved.topologyState
+                }, 'Simulasi 1');
+                simulationPages = [migrated];
+                loadPageIntoWorkspace(migrated);
+            } else {
+                const firstPage = createBlankPage('Simulasi 1');
+                simulationPages = [firstPage];
+                loadPageIntoWorkspace(firstPage);
+            }
+        }
+
+        function toggleProjectIOModal(show) {
+            const modal = document.getElementById('project-io-modal');
+            if (modal) modal.classList.toggle('hidden', !show);
+        }
+
+        function exportProjectJSON(scope) {
+            syncCurrentPageState();
+            const activePage = getActivePage();
+            const isSingle = scope === 'page' && activePage;
+            const exportPayload = {
+                app: 'NetworkTopologySimulator',
+                version: '2.0',
+                scope: isSingle ? 'page' : 'full',
+                exportedAt: new Date().toISOString(),
+                activePageId: activePageId,
+                pages: isSingle ? [activePage] : simulationPages
+            };
+
+            const jsonStr = JSON.stringify(exportPayload, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeSlug = isSingle
+                ? activePage.name.toLowerCase().replace(/[^a-z0-9-_]+/gi, '-')
+                : ('network-simulator-project-' + new Date().toISOString().slice(0, 10));
+            a.href = url;
+            a.download = safeSlug + '.json';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showNotification("Exported " + (isSingle ? activePage.name : simulationPages.length + " pages") + " as JSON!");
+        }
+
+        function triggerImportFilePicker() {
+            const input = document.getElementById('import-project-file');
+            if (input) {
+                input.value = '';
+                input.click();
+            }
+        }
+
+        function handleImportFileSelected(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    importProjectData(data, file.name);
+                } catch (err) {
+                    showNotification("Import failed: Invalid JSON file!");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function importProjectData(data, fileName) {
+            let incomingPages = [];
+            if (data && Array.isArray(data.pages) && data.pages.length > 0) {
+                incomingPages = data.pages.map(function(p, idx) {
+                    return normalizePageData(p, 'Imported ' + (idx + 1));
+                });
+            } else if (data && Array.isArray(data.devices)) {
+                const baseName = fileName ? fileName.replace(/\.json$/i, '') : 'Imported Simulation';
+                incomingPages = [normalizePageData(data, baseName)];
+            } else {
+                showNotification("Import failed: Format JSON tidak dikenali.");
+                return;
+            }
+
+            const modeEl = document.querySelector('input[name="import-mode"]:checked');
+            const mode = modeEl ? modeEl.value : 'append';
+
+            if (mode === 'replace') {
+                simulationPages = incomingPages;
+                const target = simulationPages.find(function(p) { return p.id === data.activePageId; }) || simulationPages[0];
+                loadPageIntoWorkspace(target);
+            } else {
+                const existingIds = new Set(simulationPages.map(function(p) { return p.id; }));
+                const baseTime = Date.now();
+                incomingPages.forEach(function(p, idx) {
+                    if (existingIds.has(p.id)) {
+                        p.id = 'page-imp-' + baseTime + '-' + idx;
+                    }
+                    existingIds.add(p.id);
+                    simulationPages.push(p);
+                });
+                loadPageIntoWorkspace(incomingPages[0]);
+            }
+
+            persistWorkspaceAuto();
+            toggleProjectIOModal(false);
+            showNotification("Imported " + incomingPages.length + " simulation page(s)!");
+        }
+
         function confirmResetSimulation() {
-            openModal("Reset Simulator?", "All devices and connections will be permanently removed.", "fa-solid fa-rotate-right text-amber-400", "Reset", "bg-amber-500", function() {
+            const page = getActivePage();
+            const pageTitle = page ? page.name : 'Current Page';
+            openModal("Reset Page?", "Semua perangkat dan koneksi di \"" + pageTitle + "\" akan dihapus.", "fa-solid fa-rotate-right text-amber-400", "Reset", "bg-amber-500", function() {
                 devices = [];
                 connections = [];
-                localStorage.removeItem('ns_project');
+                deviceCounters = { pc: 0, laptop: 0, server: 0, smartphone: 0, router: 0, switch: 0, hub: 0, accesspoint: 0 };
+                topologyState = { current: 'CUSTOM', generated: false, modified: false, confidence: 0 };
+                selectedDeviceId = null;
+                selectedConnectionId = null;
+                lastSuccessfulPing = null;
+                showEmptyConfigState();
                 renderWorkspace();
                 closeModal();
+                detectTopologyAutomatically();
                 runAiNetworkAnalysis();
-                showNotification("Simulator reset.");
+                persistWorkspaceAuto();
+                showNotification("Page \"" + pageTitle + "\" reset.");
             });
         }
 
@@ -2027,10 +3079,12 @@
                     return c.source !== selectedDeviceId && c.target !== selectedDeviceId;
                 });
                 selectedDeviceId = null;
+                showEmptyConfigState();
                 renderWorkspace();
                 closeModal();
                 detectTopologyAutomatically();
                 runAiNetworkAnalysis();
+                persistWorkspaceAuto();
                 showNotification("Device deleted.");
             });
         }
@@ -2039,9 +3093,11 @@
             if (!selectedConnectionId) return;
             connections = connections.filter(function(c) { return c.id !== selectedConnectionId; });
             selectedConnectionId = null;
+            showEmptyConfigState();
             renderWorkspace();
             detectTopologyAutomatically();
             runAiNetworkAnalysis();
+            persistWorkspaceAuto();
             showNotification("Connection deleted.");
         }
 
@@ -2058,7 +3114,7 @@
             if (descEl) descEl.innerText = desc;
             
             const iconEl = document.getElementById('modal-icon');
-            if (iconEl) iconEl.innerHTML = '<i class="' + icon + '"></i>';
+            if (iconEl) iconEl.innerHTML = '<i class="' + escapeHTML(icon) + '"></i>';
             
             const btn = document.getElementById('modal-confirm-btn');
             if (btn) {
@@ -2081,24 +3137,34 @@
             const t = document.createElement('div');
             t.id = 'toast-notif';
             t.className = 'fixed bottom-14 right-6 bg-[#111827] border border-cyan-500/40 text-slate-100 px-4 py-2.5 rounded-xl shadow-2xl text-xs z-50 flex items-center gap-2 animate-bounce';
-            t.innerHTML = '<i class="fa-solid fa-circle-check text-cyan-400"></i> <span>' + msg + '</span>';
+            t.innerHTML = '<i class="fa-solid fa-circle-check text-cyan-400"></i> <span>' + escapeHTML(msg) + '</span>';
             document.body.appendChild(t);
             setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
         }
 
         function handleGlobalKeydown(e) {
+            const isTyping = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
             if (e.key === 'Escape') {
                 cancelConnectionMode();
                 closeModal();
                 toggleTopologyModal(false);
                 toggleTerminalModal(false);
                 toggleLearningDashboard(false);
+                toggleDashboardModal(false);
+                toggleProjectIOModal(false);
                 toggleAssistantDrawer(false);
+                return;
             }
+            if (isTyping) return;
+
             if (e.key === 'Delete' || e.key === 'Backspace') {
-                if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
-                    deleteSelectedEntity();
-                }
+                deleteSelectedEntity();
+            } else if (e.key === '=' || e.key === '+') {
+                zoomWorkspace(0.15);
+            } else if (e.key === '-') {
+                zoomWorkspace(-0.15);
+            } else if (e.key === '0') {
+                resetWorkspaceZoom();
             }
         }
     </script>
